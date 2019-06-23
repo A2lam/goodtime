@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:goodtime/routes/HomePageRoute.dart';
-import 'package:goodtime/routes/SignupAndLoginRoute.dart';
+import 'package:goodtime/routes/LogInRoute.dart';
 import 'package:goodtime/services/BaseAuth.dart';
 
 class AppRootRoute extends StatefulWidget {
@@ -64,7 +64,7 @@ class _AppRootRouteState extends State<AppRootRoute> {
         break;
 
       case AuthStatus.NOT_LOGGED_IN:
-        return new SignupAndLoginRoute(
+        return new LogInRoute(
             auth: widget.auth,
             onSignedIn: _onLoggedIn,
         );

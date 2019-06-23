@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:goodtime/services/BaseAuth.dart';
+import 'package:goodtime/routes/SignUpRoute.dart';
 
-class SignupAndLoginRoute extends StatefulWidget {
-  SignupAndLoginRoute({ this.auth, this.onSignedIn });
+class LogInRoute extends StatefulWidget {
+  LogInRoute({ this.auth, this.onSignedIn });
 
   final BaseAuth auth;
   final VoidCallback onSignedIn;
 
   @override
-  State<StatefulWidget> createState() => new _SignupAndLoginRouteState();
+  State<StatefulWidget> createState() => new _LogInRouteState();
 }
 
-enum FormMode { LOGIN, SIGNUP }
-
-class _SignupAndLoginRouteState extends State<SignupAndLoginRoute> {
+class _LogInRouteState extends State<LogInRoute> {
   final _formKey = new GlobalKey<FormState>();
-  FormMode _formMode;
   String _email;
   String _password;
   String _errorMessage;
@@ -24,48 +22,9 @@ class _SignupAndLoginRouteState extends State<SignupAndLoginRoute> {
 
   @override
   void initState() {
-    _formMode = FormMode.LOGIN;
     _errorMessage = "";
     _isLoading = false;
     super.initState();
-  }
-
-  void _changeFormToSignUp() {
-    _formKey.currentState.reset();
-    _errorMessage = "";
-    setState(() {
-      _formMode = FormMode.SIGNUP;
-    });
-  }
-
-  void _changeFormToLogin() {
-    _formKey.currentState.reset();
-    _errorMessage = "";
-    setState(() {
-      _formMode = FormMode.LOGIN;
-    });
-  }
-
-  void _showVerifyEmailSentDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Vérifiez votre boîte mail"),
-          content: new Text("Un lien de vérification vous y a été envoyé"),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("Annuler"),
-              onPressed: () {
-                _changeFormToLogin();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   // Check if the form is valid before proceeding login or signUp
@@ -88,16 +47,8 @@ class _SignupAndLoginRouteState extends State<SignupAndLoginRoute> {
     if (_validateAndSave()) {
       String userId = "";
       try {
-        if (_formMode == FormMode.LOGIN) {
-          userId = await widget.auth.signIn(_email, _password); 
-          print('Signed in: $userId');
-        }
-        else {
-          userId = await widget.auth.signUp(_email, _password);
-          widget.auth.sendEmailVerification();
-          _showVerifyEmailSentDialog();
-          print('Signed up user: $userId');
-        }
+        userId = await widget.auth.signIn(_email, _password);
+        print('Signed in: $userId');
 
         if (userId.length > 0 && userId.length != null) {
           widget.onSignedIn();
@@ -123,7 +74,12 @@ class _SignupAndLoginRouteState extends State<SignupAndLoginRoute> {
     _isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return new Scaffold(
       appBar: AppBar(
-        title: Text("Login"),
+        title: Text(
+          "Connexion",
+          style: TextStyle(
+            color: Colors.black
+          ),
+        ),
         backgroundColor: Colors.amber[200],
       ),
       body: Stack(
@@ -233,22 +189,13 @@ class _SignupAndLoginRouteState extends State<SignupAndLoginRoute> {
             borderRadius: new BorderRadius.circular(30.0)
           ),
           color: Colors.amber[200],
-          child: _formMode == FormMode.LOGIN ?
-            Text(
-                'Connexion',
-                style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white
-                )
-            ) :
-            Text(
-                'Créer un nouveau compte',
-                style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white
-                )
+          child: Text(
+            'Connexion',
+            style: TextStyle(
+                fontSize: 20.0,
+                color: Colors.black
             )
-          ,
+          ),
           onPressed: _validateAndSubmit,
         )
       )
@@ -257,23 +204,19 @@ class _SignupAndLoginRouteState extends State<SignupAndLoginRoute> {
 
   Widget _showSecondaryButton() {
     return new FlatButton(
-      child: _formMode == FormMode.LOGIN ?
-        Text(
-          'Créer un nouveau compte',
-          style: TextStyle(
+      child: Text(
+        'Créer un nouveau compte',
+        style: TextStyle(
             fontSize: 18.0,
             fontWeight: FontWeight.w300
-          )
-        ) :
-        Text(
-          'Vous avez un compte ? Connectez vous',
-          style: TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.w300
-          )
         )
-      ,
-      onPressed: _formMode == FormMode.LOGIN ? _changeFormToSignUp : _changeFormToLogin,
+      ),
+      onPressed: () {
+        Navigator.push(
+          this.context,
+          MaterialPageRoute(builder: (context) => SignUpRoute(auth: widget.auth, onSignedIn: widget.onSignedIn)),
+        );
+      },
     );
   }
 
