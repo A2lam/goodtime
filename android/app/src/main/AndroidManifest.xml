@@ -9,7 +9,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="goodtime"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_goodtime_launcher">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
