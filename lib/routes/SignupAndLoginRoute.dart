@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:goodtime/services/BaseAuth.dart';
 
 class SignupAndLoginRoute extends StatefulWidget {
-  SignupAndLoginRoute({ this.auth });
+  SignupAndLoginRoute({ this.auth, this.onSignedIn });
 
   final BaseAuth auth;
-  // final VoidCallback onSignedIn;
+  final VoidCallback onSignedIn;
 
   @override
   State<StatefulWidget> createState() => new _SignupAndLoginRouteState();
