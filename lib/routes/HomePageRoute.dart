@@ -118,12 +118,15 @@ class _HomePageRouteState extends State<HomePageRoute> {
   Widget _showWelcomeMessage() {
     return new Container(
       alignment: Alignment.center,
-      child: Text(
-        'Bienvenue sur Goodtime',
-        style: TextStyle(
-          fontSize: 20.0,
+      child: Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Text(
+          'Bienvenue sur Goodtime',
+          style: TextStyle(
+            fontSize: 20.0,
+          ),
         ),
-      )
+      ),
     );
   }
 
