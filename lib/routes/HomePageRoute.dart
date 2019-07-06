@@ -17,17 +17,6 @@ class HomePageRoute extends StatefulWidget {
 }
 
 class _HomePageRouteState extends State<HomePageRoute> {
-  List<Todo> _todoList;
-
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  final _textEditingController = TextEditingController();
-  StreamSubscription<Event> _onTodoAddedSubscription;
-  StreamSubscription<Event> _onTodoChangedSubscription;
-
-  Query _todoQuery;
-
   bool _isEmailVerified = false;
 
   @override
@@ -35,15 +24,6 @@ class _HomePageRouteState extends State<HomePageRoute> {
     super.initState();
 
     _checkEmailVerification();
-
-    _todoList = new List();
-    _todoQuery = _database
-        .reference()
-        .child("todo")
-        .orderByChild("userId")
-        .equalTo(widget.userId);
-    _onTodoAddedSubscription = _todoQuery.onChildAdded.listen(_onEntryAdded);
-    _onTodoChangedSubscription = _todoQuery.onChildChanged.listen(_onEntryChanged);
   }
 
   void _checkEmailVerification() async {
@@ -64,18 +44,18 @@ class _HomePageRouteState extends State<HomePageRoute> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Verify your account"),
-          content: new Text("Please verify account in the link sent to email"),
+          title: new Text("Vérifiez votre compte"),
+          content: new Text("Merci de bien vouloir valider votre compte à l'aide du lien envoyé"),
           actions: <Widget>[
             new FlatButton(
-              child: new Text("Resent link"),
+              child: new Text("Renvoyer le lien"),
               onPressed: () {
                 Navigator.of(context).pop();
                 _resentVerifyEmail();
               },
             ),
             new FlatButton(
-              child: new Text("Dismiss"),
+              child: new Text("Annuler"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -92,11 +72,11 @@ class _HomePageRouteState extends State<HomePageRoute> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Verify your account"),
-          content: new Text("Link to verify account has been sent to your email"),
+          title: new Text("Verifiez votre compte"),
+          content: new Text("Le lien de vérification a été envoyé à votre boîte mail"),
           actions: <Widget>[
             new FlatButton(
-              child: new Text("Dismiss"),
+              child: new Text("Annuler"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -109,25 +89,7 @@ class _HomePageRouteState extends State<HomePageRoute> {
 
   @override
   void dispose() {
-    _onTodoAddedSubscription.cancel();
-    _onTodoChangedSubscription.cancel();
     super.dispose();
-  }
-
-  _onEntryChanged(Event event) {
-    var oldEntry = _todoList.singleWhere((entry) {
-      return entry.key == event.snapshot.key;
-    });
-
-    setState(() {
-      _todoList[_todoList.indexOf(oldEntry)] = Todo.fromSnapshot(event.snapshot);
-    });
-  }
-
-  _onEntryAdded(Event event) {
-    setState(() {
-      _todoList.add(Todo.fromSnapshot(event.snapshot));
-    });
   }
 
   _signOut() async {
@@ -139,128 +101,86 @@ class _HomePageRouteState extends State<HomePageRoute> {
     }
   }
 
-  _addNewTodo(String todoItem) {
-    if (todoItem.length > 0) {
-
-      Todo todo = new Todo(todoItem.toString(), widget.userId, false);
-      _database.reference().child("todo").push().set(todo.toJson());
-    }
-  }
-
-  _updateTodo(Todo todo){
-    //Toggle completed
-    todo.completed = !todo.completed;
-    if (todo != null) {
-      _database.reference().child("todo").child(todo.key).set(todo.toJson());
-    }
-  }
-
-  _deleteTodo(String todoId, int index) {
-    _database.reference().child("todo").child(todoId).remove().then((_) {
-      print("Delete $todoId successful");
-      setState(() {
-        _todoList.removeAt(index);
-      });
-    });
-  }
-
-  _showDialog(BuildContext context) async {
-    _textEditingController.clear();
-    await showDialog<String>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: new Row(
-              children: <Widget>[
-                new Expanded(child: new TextField(
-                  controller: _textEditingController,
-                  autofocus: true,
-                  decoration: new InputDecoration(
-                    labelText: 'Add new todo',
-                  ),
-                ))
-              ],
-            ),
-            actions: <Widget>[
-              new FlatButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              new FlatButton(
-                  child: const Text('Save'),
-                  onPressed: () {
-                    _addNewTodo(_textEditingController.text.toString());
-                    Navigator.pop(context);
-                  })
-            ],
-          );
-        }
+  Widget _showLogo() {
+    return new Hero(
+      tag: 'hero',
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
+        child: CircleAvatar(
+          backgroundColor: Colors.transparent,
+          radius: 48.0,
+          child: Image.asset('assets/logo.png'),
+        ),
+      ),
     );
   }
 
-  Widget _showTodoList() {
-    if (_todoList.length > 0) {
-      return ListView.builder(
-          shrinkWrap: true,
-          itemCount: _todoList.length,
-          itemBuilder: (BuildContext context, int index) {
-            String todoId = _todoList[index].key;
-            String subject = _todoList[index].subject;
-            bool completed = _todoList[index].completed;
-            String userId = _todoList[index].userId;
-            return Dismissible(
-              key: Key(todoId),
-              background: Container(color: Colors.red),
-              onDismissed: (direction) async {
-                _deleteTodo(todoId, index);
-              },
-              child: ListTile(
-                title: Text(
-                  subject,
-                  style: TextStyle(fontSize: 20.0),
-                ),
-                trailing: IconButton(
-                    icon: (completed)
-                        ? Icon(
-                      Icons.done_outline,
-                      color: Colors.green,
-                      size: 20.0,
-                    )
-                        : Icon(Icons.done, color: Colors.grey, size: 20.0),
-                    onPressed: () {
-                      _updateTodo(_todoList[index]);
-                    }),
-              ),
-            );
-          });
-    } else {
-      return Center(child: Text("Welcome. Your list is empty",
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 30.0),));
-    }
+  Widget _showWelcomeMessage() {
+    return new Container(
+      alignment: Alignment.center,
+      child: Text(
+        'Bienvenue sur Goodtime',
+        style: TextStyle(
+          fontSize: 20.0,
+        ),
+      )
+    );
+  }
+
+  Widget _showBody() {
+    return new ListView(
+      shrinkWrap: true,
+      children: <Widget>[
+        _showLogo(),
+        _showWelcomeMessage()
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Flutter login demo'),
-          actions: <Widget>[
-            new FlatButton(
-                child: new Text('Logout',
-                    style: new TextStyle(fontSize: 17.0, color: Colors.white)),
-                onPressed: _signOut)
+      appBar: new AppBar(
+        title: new Text('Goodtime'),
+        backgroundColor: Colors.amber[200],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text('GoodTime'),
+              decoration: BoxDecoration(color: Colors.amber[200]
+              ),
+            ),
+            ListTile(
+              title: Text('Profil'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Rechercher un bar'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Mes bars favoris'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Mes réservations'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Paramètres'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Déconnexion'),
+              onTap: () => _signOut(),
+            ),
           ],
         ),
-        body: _showTodoList(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _showDialog(context);
-          },
-          tooltip: 'Increment',
-          child: Icon(Icons.add),
-        )
+      ),
+      body: _showBody(),
     );
   }
 }
