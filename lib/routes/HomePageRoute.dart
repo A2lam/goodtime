@@ -101,6 +101,42 @@ class _HomePageRouteState extends State<HomePageRoute> {
     }
   }
 
+  Widget _showLogo() {
+    return new Hero(
+      tag: 'hero',
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
+        child: CircleAvatar(
+          backgroundColor: Colors.transparent,
+          radius: 48.0,
+          child: Image.asset('assets/logo.png'),
+        ),
+      ),
+    );
+  }
+
+  Widget _showWelcomeMessage() {
+    return new Container(
+      alignment: Alignment.center,
+      child: Text(
+        'Bienvenue sur Goodtime',
+        style: TextStyle(
+          fontSize: 20.0,
+        ),
+      )
+    );
+  }
+
+  Widget _showBody() {
+    return new ListView(
+      shrinkWrap: true,
+      children: <Widget>[
+        _showLogo(),
+        _showWelcomeMessage()
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -144,7 +180,7 @@ class _HomePageRouteState extends State<HomePageRoute> {
           ],
         ),
       ),
-      body: null,
+      body: _showBody(),
     );
   }
 }
