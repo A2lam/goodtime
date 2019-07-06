@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:goodtime/services/BaseAuth.dart';
-import 'package:goodtime/models/Todo.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'dart:async';
+import 'package:goodtime/routes/BarRoute.dart';
 
 class HomePageRoute extends StatefulWidget {
   HomePageRoute({ Key key, this.auth, this.userId, this.onSignedOut })
@@ -101,6 +99,50 @@ class _HomePageRouteState extends State<HomePageRoute> {
     }
   }
 
+  Widget _menu() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            child: Text('GoodTime'),
+            decoration: BoxDecoration(color: Colors.amber[200]
+            ),
+          ),
+          ListTile(
+            title: Text('Profil'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Rechercher un bar'),
+            onTap: () {
+              Navigator.push(
+                this.context,
+                MaterialPageRoute(builder: (context) => BarRoute()),
+              );
+            },
+          ),
+          ListTile(
+            title: Text('Mes bars favoris'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Mes réservations'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Paramètres'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Déconnexion'),
+            onTap: () => _signOut(),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _showLogo() {
     return new Hero(
       tag: 'hero',
@@ -147,42 +189,7 @@ class _HomePageRouteState extends State<HomePageRoute> {
         title: new Text('Goodtime'),
         backgroundColor: Colors.amber[200],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('GoodTime'),
-              decoration: BoxDecoration(color: Colors.amber[200]
-              ),
-            ),
-            ListTile(
-              title: Text('Profil'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Rechercher un bar'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Mes bars favoris'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Mes réservations'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Paramètres'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Déconnexion'),
-              onTap: () => _signOut(),
-            ),
-          ],
-        ),
-      ),
+      drawer: _menu(),
       body: _showBody(),
     );
   }
