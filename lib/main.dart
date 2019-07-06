@@ -10,9 +10,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Goodtime',
-      /*theme: ThemeData(
-        primarySwatch: Colors.amber,
-      ),*/
+      theme: ThemeData(
+        // primarySwatch: Colors.amber[200],
+        fontFamily: 'Muli'
+      ),
       home: new AppRootRoute(auth: new FirebaseAuthentication())
     );
   }
