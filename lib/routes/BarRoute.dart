@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:goodtime/models/Bar.dart';
+import 'package:goodtime/services/BarService.dart';
 
 class BarRoute extends StatefulWidget {
   BarRoute({ Key key }) : super(key: key);
+
+  BarService _barService = new BarService();
 
   @override
   State<StatefulWidget> createState() => new _BarRouteState();
@@ -9,13 +13,46 @@ class BarRoute extends StatefulWidget {
 
 class _BarRouteState extends State<BarRoute> {
   TextEditingController editingController = TextEditingController();
+  List<Bar> _barList;
+
+  @override
+  void initState() {
+    _barList = widget._barService.getAll();
+    super.initState();
+  }
+
+  void filterSearchResults(String query) {
+    List<Bar> duplicatedBarList = [];
+    duplicatedBarList.addAll(_barList);
+
+    if (query.isNotEmpty) {
+      List<Bar> barSearchList = [];
+
+      duplicatedBarList.forEach((bar) {
+        if (bar.name.contains(query)) {
+          barSearchList.add(bar);
+        }
+      });
+
+      setState(() {
+        _barList.clear();
+        _barList.addAll(barSearchList);
+      });
+    }
+    else {
+      setState(() {
+        _barList.clear();
+        _barList.addAll(duplicatedBarList);
+      });
+    }
+  }
 
   Widget _showSearchBar() {
     return new Padding(
       padding: const EdgeInsets.all(15.0),
       child: TextField(
         onChanged: (value) {
-
+          filterSearchResults(value);
         },
         controller: editingController,
         decoration: InputDecoration(
@@ -30,15 +67,24 @@ class _BarRouteState extends State<BarRoute> {
     );
   }
 
-  //Widget _showBarList() {
-
-  //}
+  Widget _showBarList() {
+    return new Expanded(
+        child: ListView.builder(
+          itemCount: _barList.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text('${_barList[index].name}'),
+            );
+          },
+        )
+    );
+  }
 
   Widget _showBody() {
     return new Column(
       children: <Widget>[
         _showSearchBar(),
-        //_showBarList(),
+        _showBarList(),
       ],
     );
   }
@@ -47,7 +93,7 @@ class _BarRouteState extends State<BarRoute> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Goodtime'),
+        title: new Text('Bars'),
         backgroundColor: Colors.amber[200],
       ),
       body: Container(
