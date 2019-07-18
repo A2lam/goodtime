@@ -11,17 +11,17 @@ class BarDetailsRoute extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         SizedBox(height: 120.0),
-        Center(
-          child: Container(
-            width: 100.0,
-            child: new Divider(color: Colors.white),
-          ),
-        ),
         SizedBox(height: 10.0),
         Center(
           child: Text(
             bar.name,
             style: TextStyle(color: Colors.white, fontSize: 45.0),
+          ),
+        ),
+        Center(
+          child: Text(
+            bar.address,
+            style: TextStyle(color: Colors.white, fontSize: 15.0),
           ),
         ),
         SizedBox(height: 30.0),
@@ -63,7 +63,7 @@ class BarDetailsRoute extends StatelessWidget {
 
   Widget bottomContentText() {
     return Text(
-      bar.name,
+      bar.description,
       style: TextStyle(fontSize: 18.0),
     );
   }
