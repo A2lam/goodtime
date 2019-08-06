@@ -3,8 +3,86 @@ import 'package:goodtime/models/Bar.dart';
 
 class BarDetailsRoute extends StatelessWidget {
   final Bar bar;
+  String _numberOfPerson;
+  String _reservationDate;
+
+  TextEditingController _numberOfPersonTextFieldController = TextEditingController();
+  TextEditingController _reservationDateTextFieldController = TextEditingController();
 
   BarDetailsRoute({Key key, this.bar}) : super(key: key);
+
+  Widget _showNumberOfPersonInput () {
+    return new Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
+      child: TextFormField(
+        maxLines: 1,
+        autofocus: false,
+        decoration: InputDecoration(
+            hintText: 'Nombre de personne',
+            icon: Icon(
+              Icons.restaurant_menu,
+              color: Colors.grey,
+            )
+        ),
+        validator: (value) => value.isEmpty ? 'Vous devez renseigner ce champ' : null,
+        onSaved: (value) => _numberOfPerson = value,
+      ),
+    );
+  }
+
+  Widget _showReservationDateInput () {
+    return new Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
+      child: TextFormField(
+        maxLines: 1,
+        autofocus: false,
+        decoration: InputDecoration(
+            hintText: 'Date de la reservation',
+            icon: Icon(
+              Icons.date_range,
+              color: Colors.grey,
+            )
+        ),
+        validator: (value) => value.isEmpty ? 'Vous devez renseigner ce champ' : null,
+        onSaved: (value) => _reservationDate = value,
+      ),
+    );
+  }
+
+  _displayReservationDialog(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Réservation'),
+            content: /*TextField(
+              controller: _numberOfPersonTextFieldController,
+              decoration: InputDecoration(hintText: "TextField in Dialog"),
+            )*/ Column(
+              children: <Widget>[
+                _showNumberOfPersonInput(),
+                _showReservationDateInput()
+                /*TextField(
+                  controller: _numberOfPersonTextFieldController,
+                  decoration: InputDecoration(hintText: "Nombre de personne"),
+                ),
+                TextField(
+                  controller: _reservationDateTextFieldController,
+                  decoration: InputDecoration(hintText: "Date de reservation"),
+                )*/
+              ],
+            ),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text('Réserver'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
 
   Widget topContentText() {
     return Column(
@@ -73,7 +151,7 @@ class BarDetailsRoute extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 16.0),
         width: MediaQuery.of(context).size.width,
         child: RaisedButton(
-          onPressed: () => {},
+          onPressed: () =>  _displayReservationDialog(context),
           color: Colors.amber[200], // Color.fromRGBO(58, 66, 86, 1.0)
           child:
           Text("Réserver", style: TextStyle(color: Colors.white)),
