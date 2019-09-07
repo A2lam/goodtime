@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:goodtime/services/FirebaseAuthentication.dart';
+import 'package:goodtime/services/APIAuthentication.dart';
 import 'package:goodtime/routes/AppRootRoute.dart';
 
 void main() => runApp(new MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         // primarySwatch: Colors.amber[200],
         fontFamily: 'Muli'
       ),
-      home: new AppRootRoute(auth: new FirebaseAuthentication())
+      home: new AppRootRoute(auth: new APIAuthentication())
     );
   }
 }

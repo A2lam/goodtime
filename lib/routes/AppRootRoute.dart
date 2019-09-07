@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:goodtime/routes/HomePageRoute.dart';
 import 'package:goodtime/routes/LogInRoute.dart';
-import 'package:goodtime/services/BaseAuth.dart';
+import 'package:goodtime/services/APIAuthentication.dart';
 
 class AppRootRoute extends StatefulWidget {
   AppRootRoute({ this.auth });
 
-  final BaseAuth auth;
+  final APIAuthentication auth;
 
   @override
   State<StatefulWidget> createState() => new _AppRootRouteState();
@@ -16,7 +16,7 @@ enum AuthStatus { NOT_DETERMINED, NOT_LOGGED_IN, LOGGED_IN }
 
 class _AppRootRouteState extends State<AppRootRoute> {
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
-  String _userId = "";
+  int _userId;
 
   @override
   void initState() {
@@ -24,9 +24,9 @@ class _AppRootRouteState extends State<AppRootRoute> {
     widget.auth.getCurrentUser().then((user) {
       setState(() {
         if (null != user) {
-          _userId = user?.uid;
+          _userId = user?.id;
         }
-        authStatus = null == user?.uid ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
+        authStatus = null == user?.id ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
       });
     });
   }
@@ -34,7 +34,7 @@ class _AppRootRouteState extends State<AppRootRoute> {
   void _onLoggedIn() {
     widget.auth.getCurrentUser().then((user) {
       setState(() {
-        _userId = user.uid.toString();
+        _userId = user.id;
         authStatus = AuthStatus.LOGGED_IN;
       });
     });
@@ -42,7 +42,7 @@ class _AppRootRouteState extends State<AppRootRoute> {
 
   void _onSignedOut() {
     setState(() {
-      _userId = "";
+      _userId = null;
       authStatus = AuthStatus.NOT_LOGGED_IN;
     });
   }
@@ -71,7 +71,7 @@ class _AppRootRouteState extends State<AppRootRoute> {
         break;
 
       case AuthStatus.LOGGED_IN:
-        if (_userId.length > 0 && null != _userId) {
+        if (null != _userId) {
           return new HomePageRoute(
             auth: widget.auth,
             userId: _userId,

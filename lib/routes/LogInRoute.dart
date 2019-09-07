@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:goodtime/services/BaseAuth.dart';
+import 'package:goodtime/services/APIAuthentication.dart';
 import 'package:goodtime/routes/SignUpRoute.dart';
 
 class LogInRoute extends StatefulWidget {
   LogInRoute({ this.auth, this.onSignedIn });
 
-  final BaseAuth auth;
+  final APIAuthentication auth;
   final VoidCallback onSignedIn;
 
   @override
@@ -14,7 +14,7 @@ class LogInRoute extends StatefulWidget {
 
 class _LogInRouteState extends State<LogInRoute> {
   final _formKey = new GlobalKey<FormState>();
-  String _email;
+  String _username;
   String _password;
   String _errorMessage;
   bool _isLoading;
@@ -45,12 +45,12 @@ class _LogInRouteState extends State<LogInRoute> {
     });
 
     if (_validateAndSave()) {
-      String userId = "";
+      int userId;
       try {
-        userId = await widget.auth.signIn(_email, _password);
+        userId = await widget.auth.signIn(_username, _password);
         print('Signed in: $userId');
 
-        if (userId.length > 0 && userId.length != null) {
+        if (null != userId) {
           widget.onSignedIn();
         }
       }
@@ -100,7 +100,7 @@ class _LogInRouteState extends State<LogInRoute> {
           shrinkWrap: true,
           children: <Widget>[
             _showLogo(),
-            _showEmailInput(),
+            _showUsernameInput(),
             _showPasswordInput(),
             _showPrimaryButton(),
             _showSecondaryButton(),
@@ -138,22 +138,22 @@ class _LogInRouteState extends State<LogInRoute> {
     );
   }
 
-  Widget _showEmailInput () {
+  Widget _showUsernameInput () {
     return new Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: TextFormField(
         maxLines: 1,
-        keyboardType: TextInputType.emailAddress,
+        keyboardType: TextInputType.text,
         autofocus: false,
         decoration: InputDecoration(
-          hintText: 'Email',
+          hintText: 'Nom d\'utilisateur',
           icon: Icon(
-            Icons.mail,
+            Icons.account_circle,
             color: Colors.grey,
           )
         ),
-        validator: (value) => value.isEmpty ? 'Vous devez renseigner un email' : null,
-        onSaved: (value) => _email = value,
+        validator: (value) => value.isEmpty ? 'Vous devez renseigner un nom d\'utilisateur' : null,
+        onSaved: (value) => _username = value,
       ),
     );
   }

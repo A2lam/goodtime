@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:goodtime/services/BaseAuth.dart';
+import 'package:goodtime/services/APIAuthentication.dart';
 
 class SignUpRoute extends StatefulWidget {
   SignUpRoute({ this.auth, this.onSignedIn });
 
-  final BaseAuth auth;
+  final APIAuthentication auth;
   final VoidCallback onSignedIn;
 
   @override
@@ -67,9 +67,9 @@ class _SignUpRouteState extends State<SignUpRoute> {
     if (_validateAndSave()) {
       String userId = "";
       try {
-        userId = await widget.auth.signUp(_email, _password);
-        widget.auth.sendEmailVerification();
-        _showVerifyEmailSentDialog();
+        // userId = await widget.auth.signUp(_email, _password);
+        // widget.auth.sendEmailVerification();
+        // _showVerifyEmailSentDialog();
         print('Signed up user: $userId');
 
         if (userId.length > 0 && userId.length != null) {

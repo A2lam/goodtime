@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:goodtime/services/BaseAuth.dart';
+import 'package:goodtime/services/APIAuthentication.dart';
 import 'package:goodtime/routes/BarRoute.dart';
 
 class HomePageRoute extends StatefulWidget {
   HomePageRoute({ Key key, this.auth, this.userId, this.onSignedOut })
       : super(key: key);
 
-  final BaseAuth auth;
+  final APIAuthentication auth;
   final VoidCallback onSignedOut;
-  final String userId;
+  final int userId;
 
   @override
   State<StatefulWidget> createState() => new _HomePageRouteState();
 }
 
 class _HomePageRouteState extends State<HomePageRoute> {
-  bool _isEmailVerified = false;
+  // bool _isEmailVerified = false;
 
   @override
   void initState() {
     super.initState();
 
-    _checkEmailVerification();
+    // _checkEmailVerification();
   }
 
-  void _checkEmailVerification() async {
+  /*void _checkEmailVerification() async {
     _isEmailVerified = await widget.auth.isEmailVerified();
     if (!_isEmailVerified) {
       _showVerifyEmailDialog();
@@ -83,20 +83,16 @@ class _HomePageRouteState extends State<HomePageRoute> {
         );
       },
     );
-  }
+  }*/
 
   @override
   void dispose() {
     super.dispose();
   }
 
-  _signOut() async {
-    try {
-      await widget.auth.signOut();
-      widget.onSignedOut();
-    } catch (e) {
-      print(e);
-    }
+  _signOut() {
+    widget.auth.signOut();
+    widget.onSignedOut();
   }
 
   Widget _menu() {
