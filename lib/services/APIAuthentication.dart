@@ -3,26 +3,34 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:goodtime/models/User.dart';
 
-class APIAuth {
+class APIAuthentication {
   final String baseUrl = "http://10.0.2.2:3000";
   final storage = new FlutterSecureStorage(); // Creating the storage
 
-  Future<String> signIn(String username, String password) async {
+  Future<int> signIn(String username, String password) async {
     var user;
-    var response = await http.post(baseUrl + '/api/user/login', body: {
-      "username": username,
-      "password": password
-    });
+
+    Map body = {
+      'username': username,
+      'password': password
+    };
+
+    var response = await http.post(baseUrl + '/api/user/login',
+        headers: {"Content-Type": "application/json"},
+        body: convert.json.encode(body)
+    );
 
     if (response.statusCode == 200) {
       user = convert.jsonDecode(response.body);
-      await storage.write(key: "token", value: user.token);
+      await storage.write(key: "token", value: user["token"]);
+
+      return user["user"]["id"];
     }
     else {
       print("Request failed : ${response.statusCode}");
-    }
 
-    return user.user.id;
+      return null;
+    }
   }
 
   Future<String> signUp(String firstname, String lastname, String username, String email, String password) async {
@@ -64,10 +72,10 @@ class APIAuth {
       user.max_price = userAttr["max_price"];
       user.favorite_transportation = userAttr["favorite_transportation"];
       user.created_by = userAttr["created_by"];
-      user.created_at = userAttr["created_at"];
+      user.created_at = DateTime.parse(userAttr["created_at"]);
       user.updated_by = userAttr["updated_by"];
-      user.updated_at = userAttr["updated_at"];
-      user.is_active = userAttr["is_active"];
+      user.updated_at = DateTime.parse(userAttr["updated_at"]);
+      user.is_active = (userAttr["is_active"] == 1) ? true : false;
 
       return user;
     }
@@ -76,7 +84,7 @@ class APIAuth {
     }
   }
 
-  void logOut() async {
+  void signOut() async {
     await storage.delete(key: "token"); // Deleting the user token
   }
 
