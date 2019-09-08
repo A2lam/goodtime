@@ -1,32 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:goodtime/services/BaseAuth.dart';
-import 'package:goodtime/models/Todo.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'dart:async';
+import 'package:goodtime/services/APIAuthentication.dart';
+import 'package:goodtime/routes/BarRoute.dart';
 
 class HomePageRoute extends StatefulWidget {
   HomePageRoute({ Key key, this.auth, this.userId, this.onSignedOut })
       : super(key: key);
 
-  final BaseAuth auth;
+  final APIAuthentication auth;
   final VoidCallback onSignedOut;
-  final String userId;
+  final int userId;
 
   @override
   State<StatefulWidget> createState() => new _HomePageRouteState();
 }
 
 class _HomePageRouteState extends State<HomePageRoute> {
-  bool _isEmailVerified = false;
+  // bool _isEmailVerified = false;
 
   @override
   void initState() {
     super.initState();
 
-    _checkEmailVerification();
+    // _checkEmailVerification();
   }
 
-  void _checkEmailVerification() async {
+  /*void _checkEmailVerification() async {
     _isEmailVerified = await widget.auth.isEmailVerified();
     if (!_isEmailVerified) {
       _showVerifyEmailDialog();
@@ -85,20 +83,60 @@ class _HomePageRouteState extends State<HomePageRoute> {
         );
       },
     );
-  }
+  }*/
 
   @override
   void dispose() {
     super.dispose();
   }
 
-  _signOut() async {
-    try {
-      await widget.auth.signOut();
-      widget.onSignedOut();
-    } catch (e) {
-      print(e);
-    }
+  _signOut() {
+    widget.auth.signOut();
+    widget.onSignedOut();
+  }
+
+  Widget _menu() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            child: Text('GoodTime'),
+            decoration: BoxDecoration(color: Colors.amber[200]
+            ),
+          ),
+          ListTile(
+            title: Text('Profil'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Rechercher un bar'),
+            onTap: () {
+              Navigator.push(
+                this.context,
+                MaterialPageRoute(builder: (context) => BarRoute()),
+              );
+            },
+          ),
+          ListTile(
+            title: Text('Mes bars favoris'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Mes réservations'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Paramètres'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Déconnexion'),
+            onTap: () => _signOut(),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _showLogo() {
@@ -118,12 +156,15 @@ class _HomePageRouteState extends State<HomePageRoute> {
   Widget _showWelcomeMessage() {
     return new Container(
       alignment: Alignment.center,
-      child: Text(
-        'Bienvenue sur Goodtime',
-        style: TextStyle(
-          fontSize: 20.0,
+      child: Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Text(
+          'Bienvenue sur Goodtime',
+          style: TextStyle(
+            fontSize: 20.0,
+          ),
         ),
-      )
+      ),
     );
   }
 
@@ -144,42 +185,7 @@ class _HomePageRouteState extends State<HomePageRoute> {
         title: new Text('Goodtime'),
         backgroundColor: Colors.amber[200],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('GoodTime'),
-              decoration: BoxDecoration(color: Colors.amber[200]
-              ),
-            ),
-            ListTile(
-              title: Text('Profil'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Rechercher un bar'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Mes bars favoris'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Mes réservations'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Paramètres'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Déconnexion'),
-              onTap: () => _signOut(),
-            ),
-          ],
-        ),
-      ),
+      drawer: _menu(),
       body: _showBody(),
     );
   }
