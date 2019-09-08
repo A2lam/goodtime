@@ -34,20 +34,22 @@ class APIAuthentication {
   }
 
   Future<int> signUp(String firstname, String lastname, String username, String email, String password) async {
-    var user;
-    var response = await http.post(baseUrl + '/users', body: {
-      "firstname": firstname,
-      "lastname": lastname,
-      "username": username,
-      "email": email,
-      "password": password,
-      "user_types_id": 3
-    });
+    Map body = {
+      'firstname': firstname,
+      'lastname': lastname,
+      'username': username,
+      'email': email,
+      'password': password,
+      'user_types_id': 3
+    };
+
+    var response = await http.post(baseUrl + '/users',
+        headers: {"Content-Type": "application/json"},
+        body: convert.json.encode(body)
+    );
 
     if (response.statusCode == 200) {
-      user = convert.jsonDecode(response.body);
-
-      return user["user"]["id"];
+      return this.signIn(username, password);
     }
     else {
       print("Request failed : ${response.statusCode}");

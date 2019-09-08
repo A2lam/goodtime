@@ -13,6 +13,9 @@ class SignUpRoute extends StatefulWidget {
 
 class _SignUpRouteState extends State<SignUpRoute> {
   final _formKey = new GlobalKey<FormState>();
+  String _firstname;
+  String _lastname;
+  String _username;
   String _email;
   String _password;
   String _errorMessage;
@@ -26,7 +29,7 @@ class _SignUpRouteState extends State<SignUpRoute> {
     super.initState();
   }
 
-  void _showVerifyEmailSentDialog() {
+  /*void _showVerifyEmailSentDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -45,7 +48,7 @@ class _SignUpRouteState extends State<SignUpRoute> {
         );
       },
     );
-  }
+  }*/
 
   // Check if the form is valid before proceeding login or signUp
   bool _validateAndSave() {
@@ -65,15 +68,16 @@ class _SignUpRouteState extends State<SignUpRoute> {
     });
 
     if (_validateAndSave()) {
-      String userId = "";
+      int userId;
       try {
-        // userId = await widget.auth.signUp(_email, _password);
+        userId = await widget.auth.signUp(_firstname, _lastname, _username, _email, _password);
         // widget.auth.sendEmailVerification();
         // _showVerifyEmailSentDialog();
         print('Signed up user: $userId');
 
-        if (userId.length > 0 && userId.length != null) {
+        if (null != userId) {
           widget.onSignedIn();
+          Navigator.pop(this.context);
         }
       }
       catch (e) {
@@ -122,6 +126,9 @@ class _SignUpRouteState extends State<SignUpRoute> {
           shrinkWrap: true,
           children: <Widget>[
             _showLogo(),
+            _showLastnameInput(),
+            _showFirstnameInput(),
+            _showUsernameInput(),
             _showEmailInput(),
             _showPasswordInput(),
             _showPrimaryButton(),
@@ -160,9 +167,69 @@ class _SignUpRouteState extends State<SignUpRoute> {
     );
   }
 
+  Widget _showLastnameInput () {
+    return new Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: TextFormField(
+        maxLines: 1,
+        keyboardType: TextInputType.text,
+        autofocus: false,
+        decoration: InputDecoration(
+            hintText: 'Nom',
+            icon: Icon(
+              Icons.contacts,
+              color: Colors.grey,
+            )
+        ),
+        validator: (value) => value.isEmpty ? 'Vous devez renseigner un nom' : null,
+        onSaved: (value) => _lastname = value,
+      ),
+    );
+  }
+
+  Widget _showFirstnameInput () {
+    return new Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: TextFormField(
+        maxLines: 1,
+        keyboardType: TextInputType.text,
+        autofocus: false,
+        decoration: InputDecoration(
+            hintText: 'Prénom',
+            icon: Icon(
+              Icons.contacts,
+              color: Colors.grey,
+            )
+        ),
+        validator: (value) => value.isEmpty ? 'Vous devez renseigner un prénom' : null,
+        onSaved: (value) => _firstname = value,
+      ),
+    );
+  }
+
+  Widget _showUsernameInput () {
+    return new Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: TextFormField(
+        maxLines: 1,
+        keyboardType: TextInputType.text,
+        autofocus: false,
+        decoration: InputDecoration(
+            hintText: 'Nom d\'utilisateur',
+            icon: Icon(
+              Icons.account_circle,
+              color: Colors.grey,
+            )
+        ),
+        validator: (value) => value.isEmpty ? 'Vous devez renseigner un nom d\'utilisateur' : null,
+        onSaved: (value) => _username = value,
+      ),
+    );
+  }
+
   Widget _showEmailInput () {
     return new Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+      padding: const EdgeInsets.all(5.0),
       child: TextFormField(
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
@@ -182,7 +249,7 @@ class _SignUpRouteState extends State<SignUpRoute> {
 
   Widget _showPasswordInput () {
     return new Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
+      padding: const EdgeInsets.all(5.0),
       child: TextFormField(
         maxLines: 1,
         obscureText: true,
