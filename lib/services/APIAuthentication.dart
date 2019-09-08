@@ -33,7 +33,7 @@ class APIAuthentication {
     }
   }
 
-  Future<String> signUp(String firstname, String lastname, String username, String email, String password) async {
+  Future<int> signUp(String firstname, String lastname, String username, String email, String password) async {
     var user;
     var response = await http.post(baseUrl + '/users', body: {
       "firstname": firstname,
@@ -46,12 +46,14 @@ class APIAuthentication {
 
     if (response.statusCode == 200) {
       user = convert.jsonDecode(response.body);
+
+      return user["user"]["id"];
     }
     else {
       print("Request failed : ${response.statusCode}");
-    }
 
-    return user.user.id;
+      return null;
+    }
   }
 
   Future<User> getCurrentUser() async {
