@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:goodtime/services/APIAuthentication.dart';
 import 'package:goodtime/routes/BarRoute.dart';
 
-class HomePageRoute extends StatefulWidget {
+class HomePageRoute extends StatefulWidget
+{
   HomePageRoute({ Key key, this.auth, this.userId, this.onSignedOut })
       : super(key: key);
 
@@ -14,76 +15,16 @@ class HomePageRoute extends StatefulWidget {
   State<StatefulWidget> createState() => new _HomePageRouteState();
 }
 
-class _HomePageRouteState extends State<HomePageRoute> {
-  // bool _isEmailVerified = false;
+class _HomePageRouteState extends State<HomePageRoute>
+    with SingleTickerProviderStateMixin
+{
+  TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-
-    // _checkEmailVerification();
+    _tabController = new TabController(vsync: this, initialIndex: 1, length: 2);
   }
-
-  /*void _checkEmailVerification() async {
-    _isEmailVerified = await widget.auth.isEmailVerified();
-    if (!_isEmailVerified) {
-      _showVerifyEmailDialog();
-    }
-  }
-
-  void _resentVerifyEmail(){
-    widget.auth.sendEmailVerification();
-    _showVerifyEmailSentDialog();
-  }
-
-  void _showVerifyEmailDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Vérifiez votre compte"),
-          content: new Text("Merci de bien vouloir valider votre compte à l'aide du lien envoyé"),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("Renvoyer le lien"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _resentVerifyEmail();
-              },
-            ),
-            new FlatButton(
-              child: new Text("Annuler"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showVerifyEmailSentDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Verifiez votre compte"),
-          content: new Text("Le lien de vérification a été envoyé à votre boîte mail"),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("Annuler"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }*/
 
   @override
   void dispose() {
@@ -101,16 +42,23 @@ class _HomePageRouteState extends State<HomePageRoute> {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            child: Text('GoodTime'),
-            decoration: BoxDecoration(color: Colors.amber[200]
+            child: new UserAccountsDrawerHeader(
+              decoration: BoxDecoration(color: Colors.white),
+              accountName: null,
+              accountEmail: null,
+              currentAccountPicture: new CircleAvatar(
+                backgroundColor: const Color(0xFF778899),
+                backgroundImage: AssetImage('assets/logo.png'),
+              ),
             ),
+            // decoration: BoxDecoration(color: Colors.amber[200]),
           ),
           ListTile(
             title: Text('Profil'),
             onTap: () {},
           ),
           ListTile(
-            title: Text('Rechercher un bar'),
+            title: Text('Trouver un bar'),
             onTap: () {
               Navigator.push(
                 this.context,
@@ -139,54 +87,31 @@ class _HomePageRouteState extends State<HomePageRoute> {
     );
   }
 
-  Widget _showLogo() {
-    return new Hero(
-      tag: 'hero',
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 48.0,
-          child: Image.asset('assets/logo.png'),
-        ),
-      ),
-    );
-  }
-
-  Widget _showWelcomeMessage() {
-    return new Container(
-      alignment: Alignment.center,
-      child: Padding(
-        padding: EdgeInsets.all(5.0),
-        child: Text(
-          'Bienvenue sur Goodtime',
-          style: TextStyle(
-            fontSize: 20.0,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _showBody() {
-    return new ListView(
-      shrinkWrap: true,
-      children: <Widget>[
-        _showLogo(),
-        _showWelcomeMessage()
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text('Goodtime'),
-        backgroundColor: Colors.amber[200],
+        elevation: 7.0,
+        // backgroundColor: Colors.amber[200],
+        bottom: new TabBar(
+          controller: _tabController,
+          // labelColor: Colors.black45,
+          indicatorColor: Colors.white,
+          tabs: <Widget>[
+            new Tab(icon: new Icon(Icons.list)),
+            new Tab(icon: new Icon(Icons.map))
+          ],
+        ),
       ),
       drawer: _menu(),
-      body: _showBody(),
+      body: new TabBarView(
+        controller: _tabController,
+        children: <Widget>[
+          new BarRoute(),
+          new BarRoute(),
+        ],
+      ),
     );
   }
 }
