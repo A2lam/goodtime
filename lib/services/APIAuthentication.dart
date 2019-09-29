@@ -79,11 +79,6 @@ class APIAuthentication
       user.favorite_item = userAttr["favorite_item"];
       user.max_price = userAttr["max_price"];
       user.favorite_transportation = userAttr["favorite_transportation"];
-      user.created_by = userAttr["created_by"];
-      user.created_at = DateTime.parse(userAttr["created_at"]);
-      user.updated_by = userAttr["updated_by"];
-      user.updated_at = DateTime.parse(userAttr["updated_at"]);
-      user.is_active = (userAttr["is_active"] == 1) ? true : false;
 
       return user;
     }
