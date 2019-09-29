@@ -1,41 +1,33 @@
+import 'dart:convert' as convert;
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:goodtime/models/Bar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-class BarService {
-  CollectionReference _reference = Firestore.instance.collection('bars');
+class BarService
+{
+  final String _baseUrl = "http://10.0.2.2:3000/bars";
+  final _storage = new FlutterSecureStorage();
 
-  Bar getById(id) {
-    return new Bar(name: "Bar Exemple");
-  }
+  Future<List<Bar>> getBars() async {
+    String token = await _storage.read(key: "token");
+    List<Bar> barList;
+    var bars;
 
-  List<Bar> getAll() {
-    List<Bar> barList = [];
+    var response = await http.get(_baseUrl, headers: { HttpHeaders.authorizationHeader: token });
 
-    for (int i = 0; i < 15; i++) {
-      // barList.add(new Bar(name: "Bar " + i.toString()));
-      barList.add(new Bar(
-          id: i.toString(),
-          name: "Bar " + i.toString(),
-          description: "Description " + i.toString(),
-          address: "Adresse " + i.toString()
-      ));
+    if (response.statusCode == 200) {
+      bars = convert.jsonDecode(response.body);
+      for (var bar in bars) {
+        barList.add(Bar.fromJson(bar));
+      }
+    }
+    else {
+      print("Request failed : ${response.statusCode}");
+
+      return null;
     }
 
-    return barList;
-  }
-
-  Future<List<Bar>> getAllBarsFromFireStore() async {
-    List<Bar> barList;
-    _reference
-        .snapshots()
-        .listen((data) => data.documents.forEach((document) => barList.add(
-        new Bar(
-            id: document.documentID,
-            name: document['name'],
-            description: document['description'],
-            address: document['address']
-        )
-    )));
     return barList;
   }
 }
