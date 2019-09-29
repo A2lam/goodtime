@@ -3,9 +3,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:goodtime/models/User.dart';
 
-class APIAuthentication {
-  final String baseUrl = "http://10.0.2.2:3000";
-  final storage = new FlutterSecureStorage(); // Creating the storage
+class APIAuthentication
+{
+  final String _baseUrl = "http://10.0.2.2:3000";
+  final _storage = new FlutterSecureStorage(); // Creating the storage
 
   Future<int> signIn(String username, String password) async {
     var user;
@@ -15,14 +16,14 @@ class APIAuthentication {
       'password': password
     };
 
-    var response = await http.post(baseUrl + '/api/user/login',
+    var response = await http.post(_baseUrl + '/api/user/login',
         headers: {"Content-Type": "application/json"},
         body: convert.json.encode(body)
     );
 
     if (response.statusCode == 200) {
       user = convert.jsonDecode(response.body);
-      await storage.write(key: "token", value: user["token"]);
+      await _storage.write(key: "token", value: user["token"]);
 
       return user["user"]["id"];
     }
@@ -43,7 +44,7 @@ class APIAuthentication {
       'user_types_id': 3
     };
 
-    var response = await http.post(baseUrl + '/users',
+    var response = await http.post(_baseUrl + '/users',
         headers: {"Content-Type": "application/json"},
         body: convert.json.encode(body)
     );
@@ -59,7 +60,7 @@ class APIAuthentication {
   }
 
   Future<User> getCurrentUser() async {
-    String token = await storage.read(key: "token"); // Reading the token value
+    String token = await _storage.read(key: "token"); // Reading the token value
 
     if (token != null) {
       User user = new User();
@@ -89,7 +90,7 @@ class APIAuthentication {
   }
 
   void signOut() async {
-    await storage.delete(key: "token"); // Deleting the user token
+    await _storage.delete(key: "token"); // Deleting the user token
   }
 
   Map<String, dynamic> parseJwt(String token) {
