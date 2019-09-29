@@ -61,6 +61,9 @@ class APIAuthentication
 
   Future<User> getCurrentUser() async {
     String token = await _storage.read(key: "token"); // Reading the token value
+    
+    if (this.isTokenExpired(token))
+      return null;
 
     if (token != null) {
       User user = new User();
@@ -125,5 +128,26 @@ class APIAuthentication
     }
 
     return convert.utf8.decode(convert.base64Url.decode(output));
+  }
+
+  int getTokenExpirationDate(token) {
+    Map<String, dynamic> decoded = parseJwt(token);
+  
+    if (null == decoded["exp"]) return null;
+  
+    return decoded["exp"];
+  }
+
+  bool isTokenExpired(token) {
+    if(null == token)
+      token = _storage.read(key: "token");
+    
+    if(null == token)
+      return true;
+    
+    double date = this.getTokenExpirationDate(token).toDouble();
+    if(null == date) return false;
+    double now = new DateTime.now().millisecondsSinceEpoch / 1000;
+    return !(date > now);
   }
 }
