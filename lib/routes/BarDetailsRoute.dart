@@ -98,7 +98,7 @@ class BarDetailsRoute extends StatelessWidget {
         ),
         Center(
           child: Text(
-            bar.address,
+            bar.address.street,
             style: TextStyle(color: Colors.white, fontSize: 15.0),
           ),
         ),
@@ -141,7 +141,7 @@ class BarDetailsRoute extends StatelessWidget {
 
   Widget bottomContentText() {
     return Text(
-      bar.description,
+      bar.name,
       style: TextStyle(fontSize: 18.0),
     );
   }

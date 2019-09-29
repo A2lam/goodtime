@@ -3,7 +3,8 @@ import 'package:goodtime/models/Bar.dart';
 import 'package:goodtime/services/BarService.dart';
 import 'package:goodtime/routes/BarDetailsRoute.dart';
 
-class BarRoute extends StatefulWidget {
+class BarRoute extends StatefulWidget
+{
   BarRoute({ Key key }) : super(key: key);
 
   BarService _barService = new BarService();
@@ -12,14 +13,15 @@ class BarRoute extends StatefulWidget {
   State<StatefulWidget> createState() => new _BarRouteState();
 }
 
-class _BarRouteState extends State<BarRoute> {
+class _BarRouteState extends State<BarRoute>
+{
   TextEditingController editingController = TextEditingController();
-  List<Bar> _barList;
+  List<Bar> _barList = new List<Bar>();
 
   @override
   void initState() {
-    _barList = widget._barService.getAll();
     super.initState();
+    widget._barService.getBars().then((bars) => _barList = bars);
   }
 
   // TODO : RÉGLER LE SOUCIS DE LA DUPLICATION DE LISTE
@@ -139,35 +141,30 @@ class _BarRouteState extends State<BarRoute> {
     );
   }
 
-  /*Widget _showBarList() {
-    return new Expanded(
-        child: ListView.builder(
-          itemCount: _barList.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text('${_barList[index].name}'),
-            );
-          },
-        )
-    );
-  }*/
-
   Widget _showBody() {
-    return new Column(
-      children: <Widget>[
-        _showSearchBar(),
-        _showBarList(),
-      ],
-    );
+    if (_barList.length > 0)
+      return new Column(
+        children: <Widget>[
+          _showSearchBar(),
+          _showBarList(),
+        ],
+      );
+    else
+      return new Container(
+        child: Center(
+          child: new Text(
+            "Aucun bar trouvé",
+            style: TextStyle(
+              fontSize: 20.0
+            ),
+          ),
+        ),
+      );
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Bars'),
-        backgroundColor: Colors.amber[200],
-      ),
       body: Container(
         child: _showBody(),
       ),

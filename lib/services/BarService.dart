@@ -11,10 +11,10 @@ class BarService
 
   Future<List<Bar>> getBars() async {
     String token = await _storage.read(key: "token");
-    List<Bar> barList;
+    List<Bar> barList = new List<Bar>();
     var bars;
 
-    var response = await http.get(_baseUrl, headers: { HttpHeaders.authorizationHeader: token });
+    var response = await http.get(_baseUrl, headers: { HttpHeaders.authorizationHeader: "bearer " + token });
 
     if (response.statusCode == 200) {
       bars = convert.jsonDecode(response.body);
