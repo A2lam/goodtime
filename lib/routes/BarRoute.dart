@@ -7,7 +7,7 @@ class BarRoute extends StatefulWidget
 {
   BarRoute({ Key key }) : super(key: key);
 
-  BarService _barService = new BarService();
+  final BarService _barService = new BarService();
 
   @override
   State<StatefulWidget> createState() => new _BarRouteState();

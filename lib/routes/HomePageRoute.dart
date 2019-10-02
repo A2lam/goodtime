@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:goodtime/services/APIAuthentication.dart';
 import 'package:goodtime/routes/BarRoute.dart';
+import 'package:goodtime/routes/MapBarRoute.dart';
 
 class HomePageRoute extends StatefulWidget
 {
@@ -23,7 +24,7 @@ class _HomePageRouteState extends State<HomePageRoute>
   @override
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, initialIndex: 1, length: 2);
+    _tabController = new TabController(vsync: this, initialIndex: 0, length: 2);
   }
 
   @override
@@ -109,7 +110,7 @@ class _HomePageRouteState extends State<HomePageRoute>
         controller: _tabController,
         children: <Widget>[
           new BarRoute(),
-          new BarRoute(),
+          new MapBarRoute(),
         ],
       ),
     );
