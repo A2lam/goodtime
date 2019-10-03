@@ -21,11 +21,17 @@ class _BarRouteState extends State<BarRoute>
   @override
   void initState() {
     super.initState();
-    widget._barService.getBars().then((bars) => _barList = bars);
+    this._loadBars();
+  }
+
+  void _loadBars() {
+    widget._barService.getBars().then((bars) => setState(() {
+      _barList = bars;
+    }));
   }
 
   // TODO : RÉGLER LE SOUCIS DE LA DUPLICATION DE LISTE
-  void filterSearchResults(String query) {
+  void _filterSearchResults(String query) {
     List<Bar> duplicatedBarList = [];
     duplicatedBarList.addAll(_barList);
 
@@ -56,7 +62,7 @@ class _BarRouteState extends State<BarRoute>
       padding: const EdgeInsets.all(15.0),
       child: TextField(
         onChanged: (value) {
-          filterSearchResults(value);
+          _filterSearchResults(value);
         },
         controller: editingController,
         decoration: InputDecoration(
@@ -71,7 +77,7 @@ class _BarRouteState extends State<BarRoute>
     );
   }
 
-  Widget makeListTile(Bar bar) => ListTile(
+  Widget _makeListTile(Bar bar) => ListTile(
     contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
     leading: Container(
       padding: EdgeInsets.only(right: 12.0),
@@ -119,12 +125,12 @@ class _BarRouteState extends State<BarRoute>
     },
   );
 
-  Widget makeCard(Bar bar) => Card(
+  Widget _makeCard(Bar bar) => Card(
     elevation: 8.0,
     margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
     child: Container(
       decoration: BoxDecoration(color: Colors.grey[200]), // Color.fromRGBO(64, 75, 96, .9)
-      child: makeListTile(bar),
+      child: _makeListTile(bar),
     ),
   );
 
@@ -135,7 +141,7 @@ class _BarRouteState extends State<BarRoute>
         shrinkWrap: true,
         itemCount: _barList.length,
         itemBuilder: (BuildContext context, int index) {
-          return makeCard(_barList[index]);
+          return _makeCard(_barList[index]);
         }
       )
     );
