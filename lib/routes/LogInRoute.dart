@@ -53,6 +53,12 @@ class _LogInRouteState extends State<LogInRoute> {
         if (null != userId) {
           widget.onSignedIn();
         }
+        else {
+          setState(() {
+            _isLoading = false;
+            _errorMessage = "Nom d'utilisateur ou Mot de passe incorrecte !";
+          });
+        }
       }
       catch (e) {
         print('Error: $e');
@@ -222,13 +228,15 @@ class _LogInRouteState extends State<LogInRoute> {
 
   Widget _showErrorMessage() {
     if (_errorMessage.length > 0 && _errorMessage != null) {
-      return new Text(
-        _errorMessage,
-        style: TextStyle(
-          fontSize: 13.0,
-          color: Colors.red,
-          height: 1.0,
-          fontWeight: FontWeight.w300
+      return new Center(
+        child: Text(
+          _errorMessage,
+          style: TextStyle(
+              fontSize: 15.0,
+              color: Colors.red,
+              height: 1.0,
+              fontWeight: FontWeight.w300
+          ),
         ),
       );
     }
