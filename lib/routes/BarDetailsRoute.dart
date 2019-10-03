@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:goodtime/models/Bar.dart';
 
-class BarDetailsRoute extends StatelessWidget {
+/*class BarDetailsRoute extends StatelessWidget
+{
   final Bar bar;
   String _numberOfPerson;
   String _reservationDate;
@@ -49,39 +51,40 @@ class BarDetailsRoute extends StatelessWidget {
     );
   }
 
-  _displayReservationDialog(BuildContext context) async {
+  Future<Widget> _displayReservationDialog(BuildContext context) async {
     return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Réservation'),
-            content: /*TextField(
-              controller: _numberOfPersonTextFieldController,
-              decoration: InputDecoration(hintText: "TextField in Dialog"),
-            )*/ Column(
-              children: <Widget>[
-                _showNumberOfPersonInput(),
-                _showReservationDateInput()
-                /*TextField(
-                  controller: _numberOfPersonTextFieldController,
-                  decoration: InputDecoration(hintText: "Nombre de personne"),
-                ),
-                TextField(
-                  controller: _reservationDateTextFieldController,
-                  decoration: InputDecoration(hintText: "Date de reservation"),
-                )*/
-              ],
-            ),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text('Réserver'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Réservation'),
+          content: /*TextField(
+            controller: _numberOfPersonTextFieldController,
+            decoration: InputDecoration(hintText: "TextField in Dialog"),
+          )*/ Column(
+            children: <Widget>[
+              _showNumberOfPersonInput(),
+              _showReservationDateInput()
+              /*TextField(
+                controller: _numberOfPersonTextFieldController,
+                decoration: InputDecoration(hintText: "Nombre de personne"),
+              ),
+              TextField(
+                controller: _reservationDateTextFieldController,
+                decoration: InputDecoration(hintText: "Date de reservation"),
+              )*/
             ],
-          );
-        });
+          ),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text('Réserver'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      }
+    );
   }
 
   Widget topContentText() {
@@ -181,6 +184,113 @@ class BarDetailsRoute extends StatelessWidget {
           topContent(context),
           bottomContent(context)
         ],
+      ),
+    );
+  }
+}*/
+
+class BarDetailsRoute extends StatelessWidget
+{
+  final Bar bar;
+
+  BarDetailsRoute({ Key key, this.bar }) : super(key: key);
+
+  /// Generates new horizontal divider
+  Widget _horizontalDivider() => new Container(
+      margin: const EdgeInsets.only(left: 50.0, right: 50.0),
+      child: Divider(
+        color: Colors.grey,
+        height: 36,
+      )
+  );
+
+  /// Generates new vertical divider
+  Widget _verticalDivider() => new Container(
+    margin: EdgeInsets.only(left: 5.0, right: 5.0),
+    color: Colors.grey,
+    height: 20,
+    width: 1,
+  );
+
+  /// Displays the avatar
+  Widget _showAvatar() => Container(
+    padding: EdgeInsets.all(16),
+    child: Hero(
+      tag: bar.name,
+      child: CircleAvatar(
+        radius: 100,
+        backgroundImage: NetworkImage("https://media.timeout.com/images/105190023/380/285/image.jpg"),
+      ),
+    ),
+  );
+
+  /// Displays the bar's name
+  Widget _showBarName() => Text(
+    bar.name,
+    style: TextStyle(fontSize: 22),
+  );
+
+  /// Displays bar's address
+  Widget _showBarAddress() => Row(
+    children: <Widget>[
+      Icon(Icons.location_on),
+      Text(
+        bar.address.number.toString() + " " + bar.address.street + ", " + bar.address.post_code.toString() + " " + bar.address.city,
+        style: TextStyle(fontSize: 11.0),
+      )
+    ],
+  );
+
+  /// Displays bar's phone number
+  Widget _showBarPhoneNumber() => Row(
+    children: <Widget>[
+      Icon(Icons.phone),
+      Text(
+        bar.phone,
+        style: TextStyle(fontSize: 11.0),
+      )
+    ],
+  );
+
+  /// Displays bar's contact info
+  Widget _showBarContactInfo() => Container(
+    margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+    child: Center(
+      child: Row(
+        children: <Widget>[
+          _showBarAddress(),
+          _verticalDivider(),
+          _showBarPhoneNumber()
+        ],
+      ),
+    ),
+  );
+
+  /// Displays bar's description
+  Widget _showBarDescription() => Container(
+    margin: const EdgeInsets.only(left: 20.0, right: 20.0),
+    child: Text(
+      bar.description,
+      style: TextStyle(fontSize: 16),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(bar.name),
+      ),
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            _showAvatar(),
+            _showBarName(),
+            _showBarContactInfo(),
+            _horizontalDivider(),
+            _showBarDescription(),
+          ],
+        ),
       ),
     );
   }
