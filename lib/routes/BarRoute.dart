@@ -17,6 +17,7 @@ class _BarRouteState extends State<BarRoute>
 {
   TextEditingController editingController = TextEditingController();
   List<Bar> _barList = new List<Bar>();
+  List<Bar> _displayedBarList = new List<Bar>();
 
   @override
   void initState() {
@@ -26,33 +27,31 @@ class _BarRouteState extends State<BarRoute>
 
   void _loadBars() {
     widget._barService.getBars().then((bars) => setState(() {
-      _barList = bars;
+      this._barList = bars;
+      this._displayedBarList = bars;
     }));
   }
 
   // TODO : RÉGLER LE SOUCIS DE LA DUPLICATION DE LISTE
   void _filterSearchResults(String query) {
-    List<Bar> duplicatedBarList = [];
-    duplicatedBarList.addAll(_barList);
-
     if (query.isNotEmpty) {
       List<Bar> barSearchList = [];
 
-      duplicatedBarList.forEach((bar) {
+      this._barList.forEach((bar) {
         if (bar.name.contains(query)) {
           barSearchList.add(bar);
         }
       });
 
       setState(() {
-        _barList.clear();
-        _barList.addAll(barSearchList);
+        // this._displayedBarList.clear();
+        this._displayedBarList = barSearchList;
       });
     }
     else {
       setState(() {
-        _barList.clear();
-        _barList.addAll(duplicatedBarList);
+        // this._displayedBarList.clear();
+        this._displayedBarList = _barList;
       });
     }
   }
@@ -139,16 +138,16 @@ class _BarRouteState extends State<BarRoute>
       child: ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        itemCount: _barList.length,
+        itemCount: _displayedBarList.length,
         itemBuilder: (BuildContext context, int index) {
-          return _makeCard(_barList[index]);
+          return _makeCard(_displayedBarList[index]);
         }
       )
     );
   }
 
   Widget _showBody() {
-    if (_barList.length > 0)
+    if (_displayedBarList.length > 0)
       return new Column(
         children: <Widget>[
           _showSearchBar(),
@@ -156,15 +155,20 @@ class _BarRouteState extends State<BarRoute>
         ],
       );
     else
-      return new Container(
-        child: Center(
-          child: new Text(
-            "Aucun bar trouvé",
-            style: TextStyle(
-              fontSize: 20.0
+      return new Column(
+        children: <Widget>[
+          _showSearchBar(),
+          Container(
+            child: Center(
+              child: new Text(
+                "Aucun bar trouvé",
+                style: TextStyle(
+                    fontSize: 20.0
+                ),
+              ),
             ),
-          ),
-        ),
+          )
+        ],
       );
   }
 
