@@ -19,20 +19,22 @@ class _BarRouteState extends State<BarRoute>
   List<Bar> _barList = new List<Bar>();
   List<Bar> _displayedBarList = new List<Bar>();
 
+  /// Initializes
   @override
   void initState() {
     super.initState();
-    this._loadBars();
+    _loadBars();
   }
 
+  /// Loads all bars from the API
   void _loadBars() {
     widget._barService.getBars().then((bars) => setState(() {
-      this._barList = bars;
-      this._displayedBarList = bars;
+      _barList = bars;
+      _displayedBarList = bars;
     }));
   }
 
-  // TODO : RÉGLER LE SOUCIS DE LA DUPLICATION DE LISTE
+  /// Displays list of bars that contains the queried word
   void _filterSearchResults(String query) {
     if (query.isNotEmpty) {
       List<Bar> barSearchList = [];
@@ -44,18 +46,17 @@ class _BarRouteState extends State<BarRoute>
       });
 
       setState(() {
-        // this._displayedBarList.clear();
-        this._displayedBarList = barSearchList;
+        _displayedBarList = barSearchList;
       });
     }
     else {
       setState(() {
-        // this._displayedBarList.clear();
-        this._displayedBarList = _barList;
+        _displayedBarList = _barList;
       });
     }
   }
 
+  /// Displays search bar
   Widget _showSearchBar() {
     return new Padding(
       padding: const EdgeInsets.all(15.0),
@@ -76,76 +77,48 @@ class _BarRouteState extends State<BarRoute>
     );
   }
 
-  Widget _makeListTile(Bar bar) => ListTile(
-    contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-    leading: Container(
-      padding: EdgeInsets.only(right: 12.0),
-      decoration: new BoxDecoration(
-        border: new Border(
-          right: new BorderSide(width: 1.0, color: Colors.white24)
-        )
-      ),
-      child: Icon(Icons.autorenew, color: Colors.black),
-    ),
-    title: Text(
-      bar.name,
-      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-    ),
-    // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
-    // TODO : Quand faudra rajouter un sous-titre
-    /*subtitle: Row(
-      children: <Widget>[
-        Expanded(
-            flex: 1,
-            child: Container(
-              // tag: 'hero',
-              child: LinearProgressIndicator(
-                  backgroundColor: Color.fromRGBO(209, 224, 224, 0.2),
-                  value: lesson.indicatorValue,
-                  valueColor: AlwaysStoppedAnimation(Colors.green)),
-            )),
-        Expanded(
-          flex: 4,
-          child: Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Text(lesson.level,
-                  style: TextStyle(color: Colors.white))),
-        )
-      ],
-    ),*/
-
-    trailing: Icon(Icons.keyboard_arrow_right, color: Colors.black, size: 30.0),
-    onTap: () {
-      Navigator.push(
-          this.context,
-          MaterialPageRoute(builder: (context) => BarDetailsRoute(bar: bar))
-      );
-    },
-  );
-
-  Widget _makeCard(Bar bar) => Card(
-    elevation: 8.0,
-    margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+  /// Formats single bar in order to add it in the displayed list
+  Widget _barToListItem(BuildContext context, Bar bar) => InkWell(
+    onTap: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => BarDetailsRoute(bar: bar))),
     child: Container(
-      decoration: BoxDecoration(color: Colors.grey[200]), // Color.fromRGBO(64, 75, 96, .9)
-      child: _makeListTile(bar),
+      padding: EdgeInsets.all(10),
+      child: Row(
+        children: <Widget>[
+          Hero(
+            tag: bar.name,
+            child: CircleAvatar(
+              radius: 32,
+              backgroundImage: NetworkImage("https://media.timeout.com/images/105190023/380/285/image.jpg"),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              bar.name,
+              style: TextStyle(fontSize: 17.0),
+            ),
+          )
+        ],
+      ),
     ),
   );
 
+  /// Displays the list of bars
   Widget _showBarList() {
     return Expanded(
       child: ListView.builder(
+        padding: EdgeInsets.all(10.0),
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: _displayedBarList.length,
         itemBuilder: (BuildContext context, int index) {
-          return _makeCard(_displayedBarList[index]);
+          return _barToListItem(context, _displayedBarList[index]);
         }
       )
     );
   }
 
+  /// Displays the page content
   Widget _showBody() {
     if (_displayedBarList.length > 0)
       return new Column(
@@ -172,6 +145,7 @@ class _BarRouteState extends State<BarRoute>
       );
   }
 
+  /// Builds the screen
   @override
   Widget build(BuildContext context) {
     return new Scaffold(

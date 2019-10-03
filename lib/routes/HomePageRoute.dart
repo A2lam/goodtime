@@ -100,7 +100,7 @@ class _HomePageRouteState extends State<HomePageRoute>
           // labelColor: Colors.black45,
           indicatorColor: Colors.white,
           tabs: <Widget>[
-            new Tab(icon: new Icon(Icons.list)),
+            new Tab(icon: new Icon(Icons.view_list)),
             new Tab(icon: new Icon(Icons.map))
           ],
         ),
