@@ -60,7 +60,7 @@ class APIAuthentication
   }
 
   Future<User> getCurrentUser() async {
-    String token = await _storage.read(key: "token"); // Reading the token value
+    String token = await _storage.read(key: "token") ?? null; // Reading the token value
     
     if (this.isTokenExpired(token))
       return null;
@@ -134,9 +134,6 @@ class APIAuthentication
   }
 
   bool isTokenExpired(token) {
-    if(null == token)
-      token = _storage.read(key: "token");
-    
     if(null == token)
       return true;
     
