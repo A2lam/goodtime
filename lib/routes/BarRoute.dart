@@ -91,11 +91,13 @@ class _BarRouteState extends State<BarRoute>
               backgroundImage: NetworkImage("https://media.timeout.com/images/105190023/380/285/image.jpg"),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Text(
-              bar.name,
-              style: TextStyle(fontSize: 17.0),
+          Expanded(
+            child: Container(
+              margin: EdgeInsets.only(left:15.0),
+              child: Text(
+                bar.name,
+                style: TextStyle(fontSize: 17.0),
+              ),
             ),
           )
         ],
