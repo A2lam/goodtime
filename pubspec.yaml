@@ -37,6 +37,9 @@ dependencies:
   # For Maps
   google_maps_flutter: ^0.3.0
 
+  # For DateTime picking
+  flutter_datetime_picker: ^1.2.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
