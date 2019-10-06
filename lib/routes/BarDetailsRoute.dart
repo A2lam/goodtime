@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:goodtime/models/Bar.dart';
+import 'package:goodtime/routes/SingleReservationRoute.dart';
 
 class BarDetailsRoute extends StatefulWidget
 {
@@ -102,7 +103,7 @@ class _BarDetailsRouteState extends State<BarDetailsRoute>
         backgroundColor: Colors.pinkAccent,
         icon: Icon(Icons.person),
         label: Text("Réservation personnelle"),
-        onPressed: () => {},
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SingleReservationRoute(bar: widget.bar))),
       ),
     ),
   );
