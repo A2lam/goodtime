@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:rich_alert/rich_alert.dart';
 import 'package:goodtime/models/Bar.dart';
+import 'package:goodtime/models/GoodTime.dart';
+import 'package:goodtime/services/ReservationService.dart';
 
 class SingleReservationRoute extends StatefulWidget
 {
   final Bar bar;
+  final ReservationService _reservationService = new ReservationService();
 
   SingleReservationRoute({ Key key, this.bar }) : super(key: key);
 
@@ -17,17 +21,6 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   DateTime _date = DateTime.now();
   int _numberOfParticipants;
-  String _errorMessage;
-  bool _isLoading;
-  bool _isIos;
-
-  /// Initialization
-  @override
-  void initState() {
-    _errorMessage = "";
-    _isLoading = false;
-    super.initState();
-  }
 
   /// Displays selected bar
   Widget _showSelectedBar() => Container(
@@ -80,28 +73,6 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
     ),
   );
 
-  /// Displays error message
-  Widget _showErrorMessage() {
-    if (_errorMessage.length > 0 && _errorMessage != null) {
-      return new Center(
-        child: Text(
-          _errorMessage,
-          style: TextStyle(
-            fontSize: 15.0,
-            color: Colors.red,
-            height: 1.0,
-            fontWeight: FontWeight.w300
-          ),
-        ),
-      );
-    }
-    else {
-      return new Container(
-        height: 0.0,
-      );
-    }
-  }
-
   /// Displays number of participants input
   Widget _showNumberOfParticipantsInput() => new TextFormField(
     maxLines: 1,
@@ -113,42 +84,54 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
     onSaved: (value) => _numberOfParticipants = int.parse(value),
   );
 
+  /// Displays successful creation message
+  Future<Widget> _showSuccessfulMessage() => showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return RichAlertDialog( //uses the custom alert dialog
+        alertTitle: richTitle("Réservation créée avec succès"),
+        alertSubtitle: richSubtitle(""),
+        alertType: RichAlertType.SUCCESS,
+      );
+    }
+  );
+
+  /// Displays error creation message
+  Future<Widget> _showErrorDialog() => showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return RichAlertDialog( //uses the custom alert dialog
+        alertTitle: richTitle("Erreur lors de la réservation"),
+        alertSubtitle: richSubtitle(""),
+        alertType: RichAlertType.ERROR,
+      );
+    }
+  );
+
   /// Validates and submits the form
-  void _validateAndSubmit() async {
+  void _validateAndSubmit(BuildContext context) async {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
 
       try {
-        // Call to the API
+        GoodTime goodTime = await widget._reservationService.createReservation(widget.bar.id, _date, _numberOfParticipants);
 
-        if (true) {
-
+        if (null != goodTime) {
+          _showSuccessfulMessage();
         }
         else {
-          setState(() {
-            _isLoading = false;
-            _errorMessage = "Erreur lors de la réservation !";
-          });
+          _showErrorDialog();
         }
       }
       catch (e) {
         print('Error: $e');
-        setState(() {
-          _isLoading = false;
-          if (_isIos) {
-            _errorMessage = e.details;
-          }
-          else {
-            _errorMessage = e.message;
-          }
-        });
       }
     }
   }
 
   /// Displays submit button
-  Widget _showSubmitButton() => Container(
+  Widget _showSubmitButton(BuildContext context) => Container(
     margin: EdgeInsets.only(top: 50.0, left: 65.0, right: 65.0),
     child: Center(
       child: RaisedButton(
@@ -162,13 +145,13 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
           icon: Icon(Icons.save_alt, color: Colors.white),
           label: Text("Réserver", style: TextStyle(color: Colors.white))
         ),
-        onPressed: () => _validateAndSubmit(),
+        onPressed: () => _validateAndSubmit(context),
       ),
     ),
   );
 
   /// Displays the form
-  Widget _showForm() => Container(
+  Widget _showForm(BuildContext context) => Container(
     child: new SafeArea(
       top: false,
       bottom: false,
@@ -181,8 +164,7 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
           shrinkWrap: true,
           children: <Widget>[
             _showNumberOfParticipantsInput(),
-            _showSubmitButton(),
-            _showErrorMessage(),
+            _showSubmitButton(context),
           ],
         )
       ),
@@ -191,7 +173,6 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
 
   @override
   Widget build(BuildContext context) {
-    _isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return Scaffold(
       appBar: AppBar(
         title: Text("Réservation personnelle"),
@@ -202,7 +183,7 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
             _showSelectedBar(),
             _showSelectedDatetime(),
             _showDateTimePicker(context),
-            _showForm()
+            _showForm(context)
           ],
         ),
       ),
