@@ -29,6 +29,17 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
     super.initState();
   }
 
+  /// Displays selected bar
+  Widget _showSelectedBar() => Container(
+    margin: EdgeInsets.only(top: 20.0),
+    child: Center(
+      child: Text(
+        widget.bar.name,
+        style: TextStyle(fontSize: 17.0),
+      ),
+    ),
+  );
+
   /// Displays selected datetime
   Widget _showSelectedDatetime() => Container(
     margin: EdgeInsets.only(top: 20.0),
@@ -43,6 +54,7 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
       ),
     ),
   );
+
   /// Displays Datetime picker dialog
   Widget _showDateTimePicker(BuildContext context) => Container(
     child: FlatButton(
@@ -187,6 +199,7 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
       body: Center(
         child: Column(
           children: <Widget>[
+            _showSelectedBar(),
             _showSelectedDatetime(),
             _showDateTimePicker(context),
             _showForm()
