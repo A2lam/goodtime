@@ -8,4 +8,37 @@ class ReservationService
 {
   final String _baseUrl = "http://10.0.2.2:3000/good_times";
   final _storage = new FlutterSecureStorage();
+
+  Future<GoodTime> createReservation(int bars_id, DateTime date, int number_of_participants, { int groups_id = null }) async {
+    String token = await _storage.read(key: "token");
+    GoodTime goodTime;
+
+    Map body = {
+      'bars_id': bars_id,
+      'date': date.toString(),
+      'number_of_participants': number_of_participants,
+      'groups_id': groups_id,
+      'status': 'SOU'
+    };
+
+    var response = await http.post(_baseUrl,
+        headers: {
+          "Content-Type": "application/json",
+          HttpHeaders.authorizationHeader: "bearer " + token
+        },
+        body: convert.json.encode(body)
+    );
+
+    if (response.statusCode == 200) {
+      var jsonGT = convert.jsonDecode(response.body);
+      goodTime = GoodTime.fromJson(jsonGT["good_time"]);
+    }
+    else {
+      print("Request failed : ${response.statusCode}");
+
+      return null;
+    }
+
+    return goodTime;
+  }
 }
