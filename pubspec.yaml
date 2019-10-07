@@ -40,6 +40,9 @@ dependencies:
   # For DateTime picking
   flutter_datetime_picker: ^1.2.6
 
+  # To show beautiful customized alert dialog
+  rich_alert: ^0.1.32
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
