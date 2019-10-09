@@ -151,6 +151,9 @@ class _ReservationRouteState extends State<ReservationRoute>
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Réservations'),
+      ),
       body: Container(
         child: _showBody(),
       ),
