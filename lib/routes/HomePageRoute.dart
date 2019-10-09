@@ -44,16 +44,18 @@ class _HomePageRouteState extends State<HomePageRoute>
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            child: new UserAccountsDrawerHeader(
-              decoration: BoxDecoration(color: Colors.white),
-              accountName: null,
-              accountEmail: null,
-              currentAccountPicture: new CircleAvatar(
-                backgroundColor: const Color(0xFF778899),
-                backgroundImage: AssetImage('assets/logo.png'),
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.all(10.0),
+                child: Hero(
+                  tag: Text("Utilisateur"),
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: AssetImage("assets/logo.png"),
+                  ),
+                ),
               ),
-            ),
-            // decoration: BoxDecoration(color: Colors.amber[200]),
+            ), // decoration: BoxDecoration(color: Colors.amber[200]),
           ),
           ListTile(
             title: Text('Profil'),
@@ -80,10 +82,6 @@ class _HomePageRouteState extends State<HomePageRoute>
                 MaterialPageRoute(builder: (context) => ReservationRoute()),
               );
             },
-          ),
-          ListTile(
-            title: Text('Paramètres'),
-            onTap: () {},
           ),
           ListTile(
             title: Text('Déconnexion'),
