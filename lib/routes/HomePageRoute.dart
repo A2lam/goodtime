@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:goodtime/services/APIAuthentication.dart';
 import 'package:goodtime/routes/BarRoute.dart';
 import 'package:goodtime/routes/MapBarRoute.dart';
+import 'package:goodtime/routes/ReservationRoute.dart';
 
 class HomePageRoute extends StatefulWidget
 {
@@ -63,7 +64,7 @@ class _HomePageRouteState extends State<HomePageRoute>
             onTap: () {
               Navigator.push(
                 this.context,
-                MaterialPageRoute(builder: (context) => BarRoute()),
+                MaterialPageRoute(builder: (context) => HomePageRoute()),
               );
             },
           ),
@@ -73,7 +74,12 @@ class _HomePageRouteState extends State<HomePageRoute>
           ),
           ListTile(
             title: Text('Mes réservations'),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                this.context,
+                MaterialPageRoute(builder: (context) => ReservationRoute()),
+              );
+            },
           ),
           ListTile(
             title: Text('Paramètres'),
