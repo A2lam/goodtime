@@ -80,13 +80,7 @@ class _LogInRouteState extends State<LogInRoute> {
     _isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return new Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Connexion",
-          style: TextStyle(
-            color: Colors.black
-          ),
-        ),
-        backgroundColor: Colors.amber[200],
+        title: Text("Connexion"),
       ),
       body: Stack(
         children: <Widget>[
@@ -194,14 +188,7 @@ class _LogInRouteState extends State<LogInRoute> {
           shape: new RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0)
           ),
-          color: Colors.amber[200],
-          child: Text(
-            'Connexion',
-            style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.black
-            )
-          ),
+          child: Text('Connexion'),
           onPressed: _validateAndSubmit,
         )
       )

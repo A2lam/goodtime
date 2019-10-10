@@ -100,13 +100,7 @@ class _SignUpRouteState extends State<SignUpRoute> {
     _isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return new Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Inscription",
-          style: TextStyle(
-              color: Colors.black
-          ),
-        ),
-        backgroundColor: Colors.amber[200],
+        title: Text("Inscription"),
       ),
       body: Stack(
         children: <Widget>[
@@ -277,14 +271,7 @@ class _SignUpRouteState extends State<SignUpRoute> {
               shape: new RoundedRectangleBorder(
                   borderRadius: new BorderRadius.circular(30.0)
               ),
-              color: Colors.amber[200],
-              child: Text(
-                'Créer un nouveau compte',
-                style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.black
-                )
-              ),
+              child: Text('Créer un nouveau compte'),
               onPressed: _validateAndSubmit,
             )
         )
