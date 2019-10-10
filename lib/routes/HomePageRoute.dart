@@ -9,12 +9,13 @@ import 'package:goodtime/routes/ProfilRoute.dart';
 
 class HomePageRoute extends StatefulWidget
 {
-  HomePageRoute({ Key key, this.auth, this.userId, this.onSignedOut })
-      : super(key: key);
-
   final APIAuthentication auth;
   final VoidCallback onSignedOut;
   final int userId;
+  final bool isFavBarScreen;
+
+  HomePageRoute({ Key key, this.auth, this.userId, this.onSignedOut, this.isFavBarScreen })
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _HomePageRouteState();
@@ -78,13 +79,28 @@ class _HomePageRouteState extends State<HomePageRoute>
             onTap: () {
               Navigator.push(
                 this.context,
-                MaterialPageRoute(builder: (context) => HomePageRoute()),
+                MaterialPageRoute(builder: (context) => HomePageRoute(
+                  auth: widget.auth,
+                  onSignedOut: widget.onSignedOut,
+                  userId: widget.userId,
+                  isFavBarScreen: false,
+                )),
               );
             },
           ),
           ListTile(
             title: Text('Mes bars favoris'),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                this.context,
+                MaterialPageRoute(builder: (context) => HomePageRoute(
+                  auth: widget.auth,
+                  onSignedOut: widget.onSignedOut,
+                  userId: widget.userId,
+                  isFavBarScreen: true,
+                )),
+              );
+            },
           ),
           ListTile(
             title: Text('Mes réservations'),
@@ -125,8 +141,8 @@ class _HomePageRouteState extends State<HomePageRoute>
       body: new TabBarView(
         controller: _tabController,
         children: <Widget>[
-          new BarRoute(),
-          new MapBarRoute(),
+          new BarRoute(isFavBarScreen: widget.isFavBarScreen),
+          new MapBarRoute(isFavBarScreen: widget.isFavBarScreen),
         ],
       ),
     );

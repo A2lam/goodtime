@@ -5,9 +5,10 @@ import 'package:goodtime/services/BarService.dart';
 
 class MapBarRoute extends StatefulWidget
 {
-  MapBarRoute({ Key key }) : super(key: key);
-
   final BarService _barService = new BarService();
+  final bool isFavBarScreen;
+
+  MapBarRoute({ Key key, this.isFavBarScreen }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _MapBarRouteState();
@@ -18,8 +19,8 @@ class _MapBarRouteState extends State<MapBarRoute>
   Map<String, Marker> _markers = {};
   final LatLng _initialMapPosition = const LatLng(48.859201, 2.342820);
 
-  /// Map Initialization
-  void _onMapCreated(GoogleMapController controller) {
+  /// Construct markers for all bars
+  void _loadBarMarkers() {
     widget._barService.getBars().then((bars) => {
       setState(() {
         _markers.clear();
@@ -36,6 +37,35 @@ class _MapBarRouteState extends State<MapBarRoute>
         }
       })
     });
+  }
+
+  /// Construct markers for user fav bars
+  void _loadFavBarMarkers() {
+    widget._barService.getBars().then((bars) => {
+      setState(() {
+        _markers.clear();
+        for (Bar bar in bars) {
+          final marker = Marker(
+            markerId: MarkerId(bar.id.toString()),
+            position: LatLng(bar.address.latitude, bar.address.longitude),
+            infoWindow: InfoWindow(
+              title: bar.name,
+              snippet: bar.address.number.toString() + " " + bar.address.street + ", " + bar.address.post_code.toString() + " " + bar.address.city,
+            ),
+          );
+          _markers[bar.id.toString()] = marker;
+        }
+      })
+    });
+  }
+
+  /// Map Initialization
+  void _onMapCreated(GoogleMapController controller) {
+    super.initState();
+    if (widget.isFavBarScreen)
+      _loadFavBarMarkers();
+    else
+      _loadBarMarkers();
   }
 
   @override

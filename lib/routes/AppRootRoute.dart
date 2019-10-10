@@ -76,6 +76,7 @@ class _AppRootRouteState extends State<AppRootRoute> {
             auth: widget.auth,
             userId: _userId,
             onSignedOut: _onSignedOut,
+            isFavBarScreen: false,
           );
         }
         else {

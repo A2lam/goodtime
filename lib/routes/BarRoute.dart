@@ -5,9 +5,10 @@ import 'package:goodtime/routes/BarDetailsRoute.dart';
 
 class BarRoute extends StatefulWidget
 {
-  BarRoute({ Key key }) : super(key: key);
-
   final BarService _barService = new BarService();
+  final bool isFavBarScreen;
+
+  BarRoute({ Key key, this.isFavBarScreen }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _BarRouteState();
@@ -23,11 +24,22 @@ class _BarRouteState extends State<BarRoute>
   @override
   void initState() {
     super.initState();
-    _loadBars();
+    if (widget.isFavBarScreen)
+      _loadFavBars();
+    else
+      _loadBars();
   }
 
   /// Loads all bars from the API
   void _loadBars() {
+    widget._barService.getBars().then((bars) => setState(() {
+      _barList = bars;
+      _displayedBarList = bars;
+    }));
+  }
+
+  /// Loads user's fav bars from the API
+  void _loadFavBars() {
     widget._barService.getBars().then((bars) => setState(() {
       _barList = bars;
       _displayedBarList = bars;
