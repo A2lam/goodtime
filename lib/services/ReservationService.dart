@@ -6,7 +6,7 @@ import 'package:goodtime/models/GoodTime.dart';
 
 class ReservationService
 {
-  final String _baseUrl = "http://10.0.2.2:3000/good_times";
+  final String _baseUrl = "http://192.168.0.11:3000/good_times";
   final _storage = new FlutterSecureStorage();
 
   /// Create a reservation
