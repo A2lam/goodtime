@@ -92,32 +92,37 @@ class _BarRouteState extends State<BarRoute>
   }
 
   /// Formats single bar in order to add it in the displayed list
-  Widget _barToListItem(BuildContext context, Bar bar) => InkWell(
-    onTap: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => BarDetailsRoute(bar: bar))),
-    child: Container(
-      padding: EdgeInsets.all(10),
-      child: Row(
-        children: <Widget>[
-          Hero(
-            tag: bar.name,
-            child: CircleAvatar(
-              radius: 32,
-              backgroundImage: NetworkImage("https://media.timeout.com/images/105190023/380/285/image.jpg"),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(left:15.0),
-              child: Text(
-                bar.name,
-                style: TextStyle(fontSize: 17.0),
+  Widget _barToListItem(BuildContext context, Bar bar) {
+    bool _isFavBar;
+    widget._favBarService.isBarFav(bar.id).then((isFavBar) => _isFavBar = isFavBar);
+
+    return InkWell(
+      onTap: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => BarDetailsRoute(bar: bar, isFavoriteBar: _isFavBar))),
+      child: Container(
+        padding: EdgeInsets.all(10),
+        child: Row(
+          children: <Widget>[
+            Hero(
+              tag: bar.name,
+              child: CircleAvatar(
+                radius: 32,
+                backgroundImage: NetworkImage("https://media.timeout.com/images/105190023/380/285/image.jpg"),
               ),
             ),
-          )
-        ],
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(left:15.0),
+                child: Text(
+                  bar.name,
+                  style: TextStyle(fontSize: 17.0),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   /// Displays the list of bars
   Widget _showBarList() {

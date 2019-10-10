@@ -2,12 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:goodtime/models/Bar.dart';
 import 'package:goodtime/routes/SingleReservationRoute.dart';
+import 'package:goodtime/services/FavBarService.dart';
 
 class BarDetailsRoute extends StatefulWidget
 {
   final Bar bar;
+  final bool isFavoriteBar;
+  final FavBarService _favBarService = new FavBarService();
 
-  BarDetailsRoute({ Key key, this.bar }) : super(key: key);
+  BarDetailsRoute({ Key key, this.bar, this.isFavoriteBar }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _BarDetailsRouteState();
@@ -15,6 +18,26 @@ class BarDetailsRoute extends StatefulWidget
 
 class _BarDetailsRouteState extends State<BarDetailsRoute>
 {
+  bool _isFavoriteBar;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _isFavoriteBar = widget.isFavoriteBar;
+    });
+  }
+
+  /// Mark given bar as favorite
+  Future<void> _markBarAsFavorite(Bar bar) async {
+    widget._favBarService.addFavBar(bar.id).then((bar) => setState(() => _isFavoriteBar = true));
+  }
+
+  /// Remove given bar from favorite
+  Future<void> _removeBarFromFavorite(Bar bar) async {
+    widget._favBarService.removeFavBar(bar.id).then((isBarRemoved) => setState(() => _isFavoriteBar = false));
+  }
+
   /// Generates new horizontal divider
   Widget _horizontalDivider() => new Container(
       margin: const EdgeInsets.only(left: 50.0, right: 50.0),
@@ -150,6 +173,7 @@ class _BarDetailsRouteState extends State<BarDetailsRoute>
     child: Container(
       margin: const EdgeInsets.only(top: 30.0),
       child: FloatingActionButton.extended(
+        heroTag: "showReservationBtn",
         backgroundColor: Colors.lightBlue,
         icon: Icon(Icons.insert_invitation),
         label: Text("Réserver"),
@@ -159,12 +183,68 @@ class _BarDetailsRouteState extends State<BarDetailsRoute>
     ),
   );
 
+  /// Displays mark bar as favorite button
+  Widget _showMarkAsFavoriteButton() {
+    if (!_isFavoriteBar) {
+      return Center(
+        child: Container(
+          margin: const EdgeInsets.only(top: 30.0),
+          child: FloatingActionButton.extended(
+            heroTag: "showMarkAsFavBtn",
+            backgroundColor: Colors.lightGreen,
+            icon: Icon(Icons.star),
+            label: Text("Marquer le bar comme favori"),
+            // onPressed: () => _displayReservationDialog(context),
+            onPressed: () => _markBarAsFavorite(widget.bar),
+          ),
+        )
+      );
+    }
+
+    return Center();
+  }
+
+  /// Displays remove bar from favorite button
+  Widget _showRemoveFromFavoriteButton() {
+    if (_isFavoriteBar) {
+      return Center(
+        child: Container(
+          margin: const EdgeInsets.only(top: 30.0),
+          child: FloatingActionButton.extended(
+            heroTag: "showRemoveFromFavBtn",
+            backgroundColor: Colors.redAccent,
+            icon: Icon(Icons.star_border),
+            label: Text("Retirer des favoris"),
+            // onPressed: () => _displayReservationDialog(context),
+            onPressed: () => _removeBarFromFavorite(widget.bar),
+          ),
+        )
+      );
+    }
+
+    return Center();
+  }
+
+  /// Displays App bar
+  Widget _showAppBar() {
+    if (_isFavoriteBar) return AppBar(
+      title: Text(widget.bar.name),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.stars),
+          onPressed: () => {},
+        )
+      ],
+    );
+    else return AppBar(
+      title: Text(widget.bar.name),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.bar.name),
-      ),
+      appBar: _showAppBar(),
       body: Center(
         child: Column(
           children: <Widget>[
@@ -173,6 +253,8 @@ class _BarDetailsRouteState extends State<BarDetailsRoute>
             _showBarContactInfo(),
             _horizontalDivider(),
             _showBarDescription(),
+            _showMarkAsFavoriteButton(),
+            _showRemoveFromFavoriteButton(),
             _showReservationButton(context)
           ],
         ),
