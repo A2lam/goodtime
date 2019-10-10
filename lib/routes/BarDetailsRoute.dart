@@ -96,7 +96,7 @@ class _BarDetailsRouteState extends State<BarDetailsRoute>
   );
 
   /// Displays button to personal reservation
-  Widget _showPersonalReservationButton() => Center(
+  /*Widget _showPersonalReservationButton() => Center(
     child: Container(
       margin: const EdgeInsets.only(top: 30.0),
       child: FloatingActionButton.extended(
@@ -143,7 +143,7 @@ class _BarDetailsRouteState extends State<BarDetailsRoute>
           );
         }
     );
-  }
+  }*/
 
   /// Displays reservations button
   Widget _showReservationButton(BuildContext context) => Center(
@@ -153,7 +153,8 @@ class _BarDetailsRouteState extends State<BarDetailsRoute>
         backgroundColor: Colors.lightBlue,
         icon: Icon(Icons.insert_invitation),
         label: Text("Réserver"),
-        onPressed: () => _displayReservationDialog(context),
+        // onPressed: () => _displayReservationDialog(context),
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SingleReservationRoute(bar: widget.bar))),
       ),
     ),
   );

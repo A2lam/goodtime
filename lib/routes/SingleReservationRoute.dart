@@ -175,7 +175,7 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Réservation"),
+        title: Text("Réservation personnelle"),
       ),
       body: Center(
         child: Column(
