@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:goodtime/models/Picture.dart';
+import 'package:goodtime/models/User.dart';
 import 'package:goodtime/services/APIAuthentication.dart';
 import 'package:goodtime/routes/BarRoute.dart';
 import 'package:goodtime/routes/MapBarRoute.dart';
 import 'package:goodtime/routes/ReservationRoute.dart';
+import 'package:goodtime/routes/ProfilRoute.dart';
 
 class HomePageRoute extends StatefulWidget
 {
@@ -21,11 +24,15 @@ class _HomePageRouteState extends State<HomePageRoute>
     with SingleTickerProviderStateMixin
 {
   TabController _tabController;
+  User _user;
+  Picture _userPicture;
 
   @override
   void initState() {
     super.initState();
     _tabController = new TabController(vsync: this, initialIndex: 0, length: 2);
+    widget.auth.getCurrentUser().then((user) => setState(() => _user = user));
+    // TODO : Manque une ligne ici pour la récupération de la photo
   }
 
   @override
@@ -59,7 +66,12 @@ class _HomePageRouteState extends State<HomePageRoute>
           ),
           ListTile(
             title: Text('Profil'),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                this.context,
+                MaterialPageRoute(builder: (context) => ProfileRoute(user: _user, picture: null)),
+              );
+            },
           ),
           ListTile(
             title: Text('Trouver un bar'),
