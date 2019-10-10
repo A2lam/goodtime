@@ -6,7 +6,7 @@ import 'package:goodtime/models/Bar.dart';
 
 class BarService
 {
-  final String _baseUrl = "http://10.0.2.2:3000/bars";
+  final String _baseUrl = "http://192.168.0.11:3000/bars";
   final _storage = new FlutterSecureStorage();
 
   /// Returns list of all bars from API
