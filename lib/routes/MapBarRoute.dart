@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:goodtime/models/Bar.dart';
 import 'package:goodtime/services/BarService.dart';
+import 'package:goodtime/services/FavBarService.dart';
 
 class MapBarRoute extends StatefulWidget
 {
   final BarService _barService = new BarService();
+  final FavBarService _favBarService = new FavBarService();
   final bool isFavBarScreen;
 
   MapBarRoute({ Key key, this.isFavBarScreen }) : super(key: key);
@@ -41,19 +43,19 @@ class _MapBarRouteState extends State<MapBarRoute>
 
   /// Construct markers for user fav bars
   void _loadFavBarMarkers() {
-    widget._barService.getBars().then((bars) => {
+    widget._favBarService.getFavBars().then((favBars) => {
       setState(() {
         _markers.clear();
-        for (Bar bar in bars) {
+        for (Bar favBar in favBars) {
           final marker = Marker(
-            markerId: MarkerId(bar.id.toString()),
-            position: LatLng(bar.address.latitude, bar.address.longitude),
+            markerId: MarkerId(favBar.id.toString()),
+            position: LatLng(favBar.address.latitude, favBar.address.longitude),
             infoWindow: InfoWindow(
-              title: bar.name,
-              snippet: bar.address.number.toString() + " " + bar.address.street + ", " + bar.address.post_code.toString() + " " + bar.address.city,
+              title: favBar.name,
+              snippet: favBar.address.number.toString() + " " + favBar.address.street + ", " + favBar.address.post_code.toString() + " " + favBar.address.city,
             ),
           );
-          _markers[bar.id.toString()] = marker;
+          _markers[favBar.id.toString()] = marker;
         }
       })
     });
@@ -61,7 +63,6 @@ class _MapBarRouteState extends State<MapBarRoute>
 
   /// Map Initialization
   void _onMapCreated(GoogleMapController controller) {
-    super.initState();
     if (widget.isFavBarScreen)
       _loadFavBarMarkers();
     else

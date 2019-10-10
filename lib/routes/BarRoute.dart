@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:goodtime/models/Bar.dart';
 import 'package:goodtime/services/BarService.dart';
+import 'package:goodtime/services/FavBarService.dart';
 import 'package:goodtime/routes/BarDetailsRoute.dart';
 
 class BarRoute extends StatefulWidget
 {
   final BarService _barService = new BarService();
+  final FavBarService _favBarService = new FavBarService();
   final bool isFavBarScreen;
 
   BarRoute({ Key key, this.isFavBarScreen }) : super(key: key);
@@ -40,9 +42,9 @@ class _BarRouteState extends State<BarRoute>
 
   /// Loads user's fav bars from the API
   void _loadFavBars() {
-    widget._barService.getBars().then((bars) => setState(() {
-      _barList = bars;
-      _displayedBarList = bars;
+    widget._favBarService.getFavBars().then((favBars) => setState(() {
+      _barList = favBars;
+      _displayedBarList = favBars;
     }));
   }
 

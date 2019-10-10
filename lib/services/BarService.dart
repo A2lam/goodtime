@@ -9,6 +9,7 @@ class BarService
   final String _baseUrl = "http://10.0.2.2:3000/bars";
   final _storage = new FlutterSecureStorage();
 
+  /// Returns list of all bars from API
   Future<List<Bar>> getBars() async {
     String token = await _storage.read(key: "token");
     List<Bar> barList = new List<Bar>();
@@ -29,5 +30,26 @@ class BarService
     }
 
     return barList;
+  }
+
+  /// Return one bar from API with its id
+  Future<Bar> getBar(int id) async {
+    String token = await _storage.read(key: "token");
+    Bar requestedBar = new Bar();
+    var bar;
+
+    var response = await http.get(_baseUrl + "/$id", headers: { HttpHeaders.authorizationHeader: "bearer " + token });
+
+    if (response.statusCode == 200) {
+      bar = convert.jsonDecode(response.body);
+      requestedBar = Bar.fromJson(bar);
+    }
+    else {
+      print("Request failed : ${response.statusCode}");
+
+      return null;
+    }
+
+    return requestedBar;
   }
 }
