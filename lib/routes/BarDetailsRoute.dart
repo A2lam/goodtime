@@ -75,6 +75,8 @@ class _BarDetailsRouteState extends State<BarDetailsRoute>
 
   /// Displays bar's address
   Widget _showBarAddress() => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
     children: <Widget>[
       Icon(Icons.location_on),
       Text(
@@ -86,6 +88,8 @@ class _BarDetailsRouteState extends State<BarDetailsRoute>
 
   /// Displays bar's phone number
   Widget _showBarPhoneNumber() => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
     children: <Widget>[
       Icon(Icons.phone),
       Text(
@@ -100,6 +104,8 @@ class _BarDetailsRouteState extends State<BarDetailsRoute>
     margin: const EdgeInsets.only(left: 10.0, right: 10.0),
     child: Center(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           _showBarAddress(),
           _verticalDivider(),

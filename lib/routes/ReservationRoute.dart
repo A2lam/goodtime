@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:goodtime/models/GoodTime.dart';
 import 'package:goodtime/services/ReservationService.dart';
+import 'package:goodtime/routes/ReservationDetailsRoute.dart';
 
 class ReservationRoute extends StatefulWidget
 {
@@ -78,14 +79,13 @@ class _ReservationRouteState extends State<ReservationRoute>
 
   /// Formats single reservation in order to add it in the displayed list
   Widget _reservationToListItem(BuildContext context, GoodTime reservation) => InkWell(
-    //onTap: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => BarDetailsRoute(bar: bar))),
-    onTap: () => {},
+    onTap: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => ReservationDetailsRoute(reservation: reservation))),
     child: Container(
       padding: EdgeInsets.all(10),
       child: Row(
         children: <Widget>[
           Hero(
-            tag: reservation.bar.name,
+            tag: reservation.id.toString(),
             child: CircleAvatar(
               radius: 32,
               backgroundImage: NetworkImage("https://media.timeout.com/images/105190023/380/285/image.jpg"),

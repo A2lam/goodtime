@@ -44,7 +44,7 @@ class ReservationService
     return goodTime;
   }
 
-  /// Get all user's reservation
+  /// Get all user's reservations
   Future<List<GoodTime>> getReservations() async {
     String token = await _storage.read(key: "token");
     List<GoodTime> reservationList = new List<GoodTime>();
@@ -65,5 +65,48 @@ class ReservationService
     }
 
     return reservationList;
+  }
+
+  /// Get a specific reservation
+  Future<GoodTime> getReservation(int goodTimesId) async {
+    String token = await _storage.read(key: "token");
+    GoodTime requestedGT = new GoodTime();
+    var goodTime;
+
+    var response = await http.get(_baseUrl + "/$goodTimesId", headers: { HttpHeaders.authorizationHeader: "bearer " + token });
+
+    if (response.statusCode == 200) {
+      goodTime = convert.jsonDecode(response.body);
+      requestedGT = GoodTime.fromJson(goodTime);
+    }
+    else {
+      print("Request failed : ${response.statusCode}");
+
+      return null;
+    }
+
+    return requestedGT;
+  }
+
+  /// Cancels a reservation
+  Future<bool> cancelReservation(int reservationsId) async {
+    String token = await _storage.read(key: "token");
+
+    var response = await http.delete(_baseUrl + "/$reservationsId",
+        headers: { HttpHeaders.authorizationHeader: "bearer " + token }
+    );
+
+    if (response.statusCode == 200) {
+      var reservationCanceled = convert.jsonDecode(response.body);
+      if (reservationCanceled["return"] == "OK")
+        return true;
+      else
+        return false;
+    }
+    else {
+      print("Request failed : ${response.statusCode}");
+
+      return null;
+    }
   }
 }

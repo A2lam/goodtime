@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:rich_alert/rich_alert.dart';
 import 'package:goodtime/models/User.dart';
 import 'package:goodtime/models/Picture.dart';
 import 'package:goodtime/services/APIAuthentication.dart';
