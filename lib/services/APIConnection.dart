@@ -1,6 +1,6 @@
 class APIConnection
 {
   static String getAPIUrl() {
-    return "http://192.168.43.185:3000";
+    return "http://10.0.2.2:3000";
   }
 }

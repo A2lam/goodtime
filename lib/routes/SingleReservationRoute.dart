@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:rich_alert/rich_alert.dart';
@@ -21,6 +22,12 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   DateTime _date = DateTime.now();
   int _numberOfParticipants;
+
+  /// Cancel the details page
+  _cancelDetails(BuildContext context) {
+    Navigator.pop(context);
+    Navigator.pop(context);
+  }
 
   /// Displays selected bar
   Widget _showSelectedBar() => Container(
@@ -85,28 +92,48 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
   );
 
   /// Displays successful creation message
-  Future<Widget> _showSuccessfulMessage() => showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return RichAlertDialog( //uses the custom alert dialog
-        alertTitle: richTitle("Réservation créée avec succès"),
-        alertSubtitle: richSubtitle(""),
-        alertType: RichAlertType.SUCCESS,
-      );
-    }
-  );
+  Future<Widget> _showSuccessfulMessage(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text(
+              "Reservation effectuée",
+              style: TextStyle(color: Colors.greenAccent),
+            ),
+            content: Text(""),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () => _cancelDetails(context),
+                  child: Text('Ok')
+              ),
+            ],
+          );
+        }
+    );
+  }
 
   /// Displays error creation message
-  Future<Widget> _showErrorDialog() => showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return RichAlertDialog( //uses the custom alert dialog
-        alertTitle: richTitle("Erreur lors de la réservation"),
-        alertSubtitle: richSubtitle(""),
-        alertType: RichAlertType.ERROR,
-      );
-    }
-  );
+  Future<Widget> _showErrorDialog(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text(
+              "Erreur lors de la réservation",
+              style: TextStyle(color: Colors.redAccent),
+            ),
+            content: Text(""),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Ok')
+              ),
+            ],
+          );
+        }
+    );
+  }
 
   /// Validates and submits the form
   void _validateAndSubmit(BuildContext context) async {
@@ -118,10 +145,10 @@ class _SingleReservationRouteState extends State<SingleReservationRoute>
         GoodTime goodTime = await widget._reservationService.createReservation(widget.bar.id, _date, _numberOfParticipants);
 
         if (null != goodTime) {
-          _showSuccessfulMessage();
+          _showSuccessfulMessage(context);
         }
         else {
-          _showErrorDialog();
+          _showErrorDialog(context);
         }
       }
       catch (e) {
