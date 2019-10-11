@@ -2,11 +2,12 @@ import 'dart:convert' as convert;
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:goodtime/services/APIConnection.dart';
 import 'package:goodtime/models/GoodTime.dart';
 
 class ReservationService
 {
-  final String _baseUrl = "http://192.168.0.11:3000/good_times";
+  final String _baseUrl = APIConnection.getAPIUrl() + "/good_times";
   final _storage = new FlutterSecureStorage();
 
   /// Create a reservation

@@ -1,13 +1,16 @@
 import 'dart:convert' as convert;
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:goodtime/services/APIConnection.dart';
 import 'package:goodtime/models/User.dart';
 
 class APIAuthentication
 {
-  final String _baseUrl = "http://192.168.0.11:3000";
+  final String _baseUrl = APIConnection.getAPIUrl();
   final _storage = new FlutterSecureStorage(); // Creating the storage
 
+  /// Authenticates the user
   Future<int> signIn(String username, String password) async {
     var user;
 
@@ -34,6 +37,7 @@ class APIAuthentication
     }
   }
 
+  /// Registers the user
   Future<int> signUp(String firstname, String lastname, String username, String email, String password) async {
     Map body = {
       'firstname': firstname,
@@ -59,6 +63,7 @@ class APIAuthentication
     }
   }
 
+  /// Returns the current connected user
   Future<User> getCurrentUser() async {
     String token = await _storage.read(key: "token") ?? null; // Reading the token value
     
@@ -87,10 +92,12 @@ class APIAuthentication
     }
   }
 
+  /// Sign outs the user
   void signOut() async {
     await _storage.delete(key: "token"); // Deleting the user token
   }
 
+  /// Parses a jwt into Map
   Map<String, dynamic> parseJwt(String token) {
     final parts = token.split('.');
     if (parts.length != 3) {
@@ -106,6 +113,7 @@ class APIAuthentication
     return payloadMap;
   }
 
+  /// Decodes a jwt
   String _decodeBase64(String str) {
     String output = str.replaceAll('-', '+').replaceAll('_', '/');
 
@@ -125,6 +133,7 @@ class APIAuthentication
     return convert.utf8.decode(convert.base64Url.decode(output));
   }
 
+  /// Extract the expiration linked to a jwt
   int getTokenExpirationDate(token) {
     Map<String, dynamic> decoded = parseJwt(token);
   
@@ -133,6 +142,7 @@ class APIAuthentication
     return decoded["exp"];
   }
 
+  /// Checks if jwt has expired
   bool isTokenExpired(token) {
     if(null == token)
       return true;
@@ -141,5 +151,27 @@ class APIAuthentication
     if(null == date) return false;
     double now = new DateTime.now().millisecondsSinceEpoch / 1000;
     return !(date > now);
+  }
+
+  /// Deletes a user
+  Future<bool> deleteUser(int usersId) async {
+    String token = await _storage.read(key: "token");
+
+    var response = await http.delete(_baseUrl + "/users/$usersId",
+        headers: { HttpHeaders.authorizationHeader: "bearer " + token }
+    );
+
+    if (response.statusCode == 200) {
+      var userDeleted = convert.jsonDecode(response.body);
+      if (userDeleted["return"] == "OK")
+        return true;
+      else
+        return false;
+    }
+    else {
+      print("Request failed : ${response.statusCode}");
+
+      return null;
+    }
   }
 }
