@@ -70,7 +70,7 @@ class _HomePageRouteState extends State<HomePageRoute>
             onTap: () {
               Navigator.push(
                 this.context,
-                MaterialPageRoute(builder: (context) => ProfileRoute(user: _user, picture: null)),
+                MaterialPageRoute(builder: (context) => ProfileRoute(user: _user, picture: null, onSignedOut: widget.onSignedOut)),
               );
             },
           ),
